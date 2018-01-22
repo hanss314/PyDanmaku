@@ -1,0 +1,8 @@
+# editor
+.idea
+
+# compiled python files
+__pycache__
+
+# testing files
+test.py
