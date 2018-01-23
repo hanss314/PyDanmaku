@@ -73,6 +73,7 @@ class Game:
         self.tasks.append(task)
 
     def set_player(self, player):
-        self.player.sprites()[0].kill()
+        if self.player.sprites():
+            self.player.sprites()[0].kill()
         self.player.add(player)
         self.objects.add(player)

@@ -6,9 +6,8 @@ class Object(pygame.sprite.Sprite):
         super().__init__()
         self.game = game
         self.image = img
-        self.image = pygame.image.load(img).convert()
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = x, y
+        self.x, self.y = x, y
 
     def step(self):
         self.update()
@@ -16,8 +15,18 @@ class Object(pygame.sprite.Sprite):
     def update(self):
         pass
 
+    @property
     def x(self):
-        return self.rect.x
+        return self.rect.x + self.rect.width/2
 
+    @x.setter
+    def x(self, value):
+        self.rect.x = value - self.rect.width/2
+
+    @property
     def y(self):
-        return self.rect.y
+        return self.rect.y + self.rect.height / 2
+
+    @y.setter
+    def y(self, value):
+        self.rect.y = value - self.rect.height / 2
