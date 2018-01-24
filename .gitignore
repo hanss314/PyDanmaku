@@ -3,6 +3,9 @@
 
 # compiled python files
 __pycache__
+build
+dist
+*.egg-info
 
 # testing files
 test.py
