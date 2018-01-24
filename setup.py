@@ -14,7 +14,7 @@ with open('README.md') as f:
     readme = f.read()
 
 setup(name='pydanmaku',
-      author='hanss',
+      author='hanss314',
       url='https://github.com/hanss314/PyDanmaku',
       version=version,
       packages=['pydanmaku'],
