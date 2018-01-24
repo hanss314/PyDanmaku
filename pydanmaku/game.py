@@ -23,7 +23,8 @@ class Game:
         self.screen = pygame.display.set_mode((640, 480))
         self.tasks = []
         self.objects = pygame.sprite.Group()
-        self.player = pygame.sprite.Group()
+        self.bullets = pygame.sprite.Group()
+        self.player = None
 
     def run(self):
         """
@@ -73,12 +74,21 @@ class Game:
         self.tasks.append(task)
 
     def set_player(self, player):
-        if self.player.sprites():
-            self.player.sprites()[0].kill()
-        self.player.add(player)
+        """
+        Sets the player object
+        :param player:
+        :return:
+        """
+        if self.player:
+            self.player.kill()
+        self.player = player
         self.objects.add(player)
 
-
     def add_bullet(self, bullet):
-        print(bullet)
+        """
+        Adds a bullet onto the screen
+        :param bullet:
+        :return:
+        """
         self.objects.add(bullet)
+        self.bullets.add(bullet)

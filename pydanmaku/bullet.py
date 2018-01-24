@@ -1,4 +1,5 @@
 import math
+import pygame
 
 from .pdobject import Object
 
@@ -18,6 +19,7 @@ class Bullet(Object):
         self._angle = angle or 0  # cache in case speed drops to 0
         self.acceleration = acceleration
         self.angular_momentum = angular_momentum
+        self.base_image = self._image = img
         if angle is not None and speed is not None:
             self.speed = speed
 
@@ -27,6 +29,7 @@ class Bullet(Object):
         self.angle %= 360
         self.x += self.vx
         self.y += self.vy
+        self.image = pygame.transform.rotate(self.base_image, -self.angle)
         super().step()
 
     @property
@@ -41,6 +44,18 @@ class Bullet(Object):
     @property
     def angle(self):
         return self._angle
+
+    @property
+    def image(self):
+        return self._image
+
+    @image.setter
+    def image(self, value):
+        x, y = self.x, self.y
+        self._image = value
+        self.rect = self._image.get_rect()
+        self.x = x
+        self.y = y
 
     @angle.setter
     def angle(self, value):
