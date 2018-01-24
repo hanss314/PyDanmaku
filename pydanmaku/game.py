@@ -77,3 +77,8 @@ class Game:
             self.player.sprites()[0].kill()
         self.player.add(player)
         self.objects.add(player)
+
+
+    def add_bullet(self, bullet):
+        print(bullet)
+        self.objects.add(bullet)
