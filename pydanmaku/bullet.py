@@ -2,6 +2,7 @@ import math
 import pygame
 
 from .pdobject import Object
+from .collider import Collider
 
 
 def rads(number):
@@ -11,9 +12,10 @@ def rads(number):
 class Bullet(Object):
     def __init__(
             self, game, x=0, y=0, img=None, *,
-            vx=None, vy=None, speed=None, angle=None, acceleration=0, angular_momentum=0
+            vx=None, vy=None, speed=None, angle=None, acceleration=0, angular_momentum=0,
+            collider=None
     ):
-        super().__init__(game, x=x, y=y, img=img)
+        super().__init__(game, x=x, y=y, img=img, collider=collider)
         self.vx = vx or 0
         self.vy = vy or 0
         self._angle = angle or 0  # cache in case speed drops to 0
@@ -23,6 +25,12 @@ class Bullet(Object):
         if angle is not None and speed is not None:
             self.speed = speed
 
+        if collider:
+            self.collider = collider
+        else:
+            self.collider = Collider(self.x, self.y, self.rect.height, self.rect.width, self.angle)
+
+
     def step(self):
         self.speed += self.acceleration
         self.angle += self.angular_momentum
@@ -30,6 +38,7 @@ class Bullet(Object):
         self.x += self.vx
         self.y += self.vy
         self.image = pygame.transform.rotate(self.base_image, -self.angle)
+        self.collider.x, self.collider.y = self.x, self.y
         super().step()
 
     @property
@@ -60,5 +69,6 @@ class Bullet(Object):
     @angle.setter
     def angle(self, value):
         self._angle = value
+        self.collider.angle = self.angle
         self.vx = math.cos(rads(self._angle)) * self.speed
         self.vy = math.sin(rads(self._angle)) * self.speed
