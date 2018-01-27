@@ -22,6 +22,7 @@ class Game:
     def __init__(self):
         self.screen = pygame.display.set_mode((640, 480))
         self.tasks = []
+        self.scripts = []
         self.objects = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.player = None
@@ -39,9 +40,20 @@ class Game:
             self.objects.draw(self.screen)
             for task in list(self.tasks):
                 try:
-                    task.__next__()
+                    while True:
+                        result = task[-1].__next__()
+                        if inspect.isgenerator(result):
+                            task.append(result)
+                        else:
+                            break
                 except StopIteration:
+                    task.pop()
+                except IndexError:
                     self.tasks.remove(task)
+
+            if not self.tasks and self.scripts:
+                self.tasks.append(self.scripts.pop())
+
             keys = pygame.key.get_pressed()
             events = pygame.event.get()
             for obj in self.objects:
@@ -92,3 +104,8 @@ class Game:
         """
         self.objects.add(bullet)
         self.bullets.add(bullet)
+
+    def add_script(self, module):
+        module = __import__(module)
+        task = module.main(self)
+        self.scripts.insert(0, task)
