@@ -109,3 +109,4 @@ class Game:
         module = __import__(module)
         task = module.main(self)
         self.scripts.insert(0, task)
+        return task

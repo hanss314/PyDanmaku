@@ -9,6 +9,7 @@ class Object(pygame.sprite.Sprite):
         self.x, self.y = x, y
         self.game = game
         self.image = img
+        self.collider = collider
 
     def step(self):
         """

@@ -4,9 +4,7 @@ import pygame
 from .pdobject import Object
 from .collider import Collider
 
-
-def rads(number):
-    return math.pi * number / 180
+from .utils import rads
 
 
 class Bullet(Object):
@@ -25,11 +23,8 @@ class Bullet(Object):
         if angle is not None and speed is not None:
             self.speed = speed
 
-        if collider:
-            self.collider = collider
-        else:
+        if not collider:
             self.collider = Collider(self.x, self.y, self.rect.height, self.rect.width, self.angle)
-
 
     def step(self):
         self.speed += self.acceleration
