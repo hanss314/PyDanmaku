@@ -4,7 +4,7 @@ import pygame
 from .pdobject import Object
 from .collider import Collider
 
-from .utils import rads
+from math import radians as rads
 
 
 class Bullet(Object):

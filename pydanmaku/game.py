@@ -104,6 +104,7 @@ class Game:
         """
         self.objects.add(bullet)
         self.bullets.add(bullet)
+        return bullet
 
     def add_script(self, module):
         module = __import__(module)

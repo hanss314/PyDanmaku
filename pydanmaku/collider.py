@@ -1,5 +1,7 @@
 import math
-from .utils import degs, rads
+
+from math import radians as rads
+from math import degrees as degs
 
 
 class Collider:
@@ -45,6 +47,14 @@ class Collider:
                 lambda pos: abs(pos[0]) <= 1 and abs(pos[1]) <= 1, player_box
             ))
 
+    def derivative(self, x, y):
+        # ignore if it's not an ellipse, we don't really care
+        if not self.ellipse:
+            return 0
+
+        coefficient = -(self.height ** 2) / (self.width ** 2)
+        return coefficient * x / y
+
     def get_axis(self, x, y, angle) -> (int, int):
         """
         Returns the range of coverage along a line.
@@ -68,11 +78,26 @@ class Collider:
         if angle > 90: angle = 180 - angle
 
         if self.ellipse:
-            distance = 0
+            # Uses the derivative of ellipse, dy/dx = (height**2) / (width ** 2) * x / y
+            coefficient = -self.height * self.height / (self.width * self.width)
+            # Finds slope we need: (dy/dx), then finds the x/y value needed
+            slope = math.atan(angle - 90)
+            slope /= coefficient
+            # calculus and algebra to find the y coordinate
+            py = self.height * self.width
+            py *= math.sqrt(
+                1/(slope * slope * self.width * self.width + self.height * self.height)
+            ) / 2
+            px = slope * py
+            # The angle between collider and our point
+            diangle = math.atan2(py, px)
+            angle -= diangle
+            distance = math.sqrt(py*py + px*px) * math.cos(rads(angle))
+
         else:
             # Take the diagonal of one of the quadrants, from the center to the farthest corner
             # Since we transformed it, only one corner can be the farthest
-            diagonal = math.sqrt(self.width ** 2 + self.height ** 2) / 2
+            diagonal = math.sqrt(self.width * self.width + self.height * self.height) / 2
             diangle = math.atan2(self.height, self.width)
             # Angle(collider, axis) - Angle(collider, diagonal) = Angle(diagonal, axis)
             angle -= diangle

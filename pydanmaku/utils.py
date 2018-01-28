@@ -25,21 +25,3 @@ def load_image_chunks(fp, *chunks):
         surfaces.append(img.subsurface(Rect(*chunk)))
 
     return surfaces
-
-
-def rads(angle):
-    """
-    Converts an angle in degrees to radians
-    :param angle:
-    :return:
-    """
-    return math.pi * angle / 180
-
-
-def degs(angle):
-    """
-    Converts an angle in radians to degrees
-    :param angle:
-    :return:
-    """
-    return 180 * angle / math.pi
