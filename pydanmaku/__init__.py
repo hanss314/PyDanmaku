@@ -3,6 +3,7 @@ import utils
 from .game import Game
 from .player import Player
 from .bullet import Bullet
+from .collider import Collider
 
 __title__ = 'pydanmaku'
 __author__ = 'hanss'

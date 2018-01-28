@@ -52,7 +52,7 @@ class Game:
                     self.tasks.remove(task)
 
             if not self.tasks and self.scripts:
-                self.tasks.append(self.scripts.pop())
+                self.tasks.append([self.scripts.pop()])
 
             keys = pygame.key.get_pressed()
             events = pygame.event.get()

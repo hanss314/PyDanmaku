@@ -75,6 +75,7 @@ class Collider:
         # then mirrors across x-axis if needed
         # This is the angle between collider and axis
         angle = (self.angle % 180) - (angle % 180)
+        if angle < 0: angle = -angle
         if angle > 90: angle = 180 - angle
 
         if self.ellipse:
@@ -87,10 +88,10 @@ class Collider:
             py = self.height * self.width
             py *= math.sqrt(
                 1/(slope * slope * self.width * self.width + self.height * self.height)
-            ) / 2
+            )
             px = slope * py
             # The angle between collider and our point
-            diangle = math.atan2(py, px)
+            diangle = degs(math.atan2(py, px))
             angle -= diangle
             distance = math.sqrt(py*py + px*px) * math.cos(rads(angle))
 
@@ -98,7 +99,7 @@ class Collider:
             # Take the diagonal of one of the quadrants, from the center to the farthest corner
             # Since we transformed it, only one corner can be the farthest
             diagonal = math.sqrt(self.width * self.width + self.height * self.height) / 2
-            diangle = math.atan2(self.height, self.width)
+            diangle = degs(math.atan2(self.height, self.width))
             # Angle(collider, axis) - Angle(collider, diagonal) = Angle(diagonal, axis)
             angle -= diangle
             distance = diagonal * math.cos(rads(angle))
@@ -116,6 +117,7 @@ class Collider:
             ))
 
         def overlap(angle):
+            angle %= 360
             # get their coverage on the axis
             # the first return value will always be smaller
             al, ah = self.get_axis(self.x, self.y, angle)
