@@ -70,6 +70,9 @@ class Game:
                     if keys[k] and hasattr(obj, v):
                         obj.__getattribute__(v)()
 
+            if keys[pygame.K_q]:
+                break
+
             for obj in list(self.objects.sprites()):
                 if hasattr(obj, 'step'):
                     obj.step()
@@ -129,7 +132,7 @@ class Game:
         :param module:
         :return:
         """
-        module = __import__(module)
+        module = __import__(module, fromlist=['*'])
         task = module.main(self)
         self.scripts.insert(0, task)
         return task
