@@ -82,13 +82,13 @@ class Collider:
             # Uses the derivative of ellipse, dy/dx = (height**2) / (width ** 2) * x / y
             coefficient = -self.height * self.height / (self.width * self.width)
             # Finds slope we need: (dy/dx), then finds the x/y value needed
-            slope = math.atan(angle - 90)
+            slope = math.tan(rads(angle - 90))
             slope /= coefficient
             # calculus and algebra to find the y coordinate
             py = self.height * self.width
             py *= math.sqrt(
-                1/(slope * slope * self.width * self.width + self.height * self.height)
-            )
+                1/(slope * slope * self.height * self.height + self.width * self.width)
+            ) / 2
             px = slope * py
             # The angle between collider and our point
             diangle = degs(math.atan2(py, px))
@@ -123,7 +123,8 @@ class Collider:
             al, ah = self.get_axis(self.x, self.y, angle)
             bl, bh = collider.get_axis(self.x, self.y, angle)
             # test if they overlap
-            return al <= bh and bl <= ah
+            c = al <= bh and bl <= ah
+            return c
 
         return all(map(
             overlap, lines
