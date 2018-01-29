@@ -47,14 +47,6 @@ class Collider:
                 lambda pos: abs(pos[0]) <= 1 and abs(pos[1]) <= 1, player_box
             ))
 
-    def derivative(self, x, y):
-        # ignore if it's not an ellipse, we don't really care
-        if not self.ellipse:
-            return 0
-
-        coefficient = -(self.height ** 2) / (self.width ** 2)
-        return coefficient * x / y
-
     def get_axis(self, x, y, angle) -> (int, int):
         """
         Returns the range of coverage along a line.
@@ -109,6 +101,11 @@ class Collider:
         return center - distance, center + distance
 
     def collides(self, collider) -> bool:
+        """
+        Returns if a collider is intersecting another
+        :param collider:
+        :return:
+        """
         max_dist = math.hypot(
             (self.width + collider.width) / 2,
             (self.height + collider.height) / 2

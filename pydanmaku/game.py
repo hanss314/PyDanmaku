@@ -1,6 +1,9 @@
 import pygame
 import inspect
 
+from .bullet import Bullet
+from .player import Player
+
 
 PRESSED = {
     pygame.K_UP: 'up',
@@ -82,7 +85,7 @@ class Game:
         :return:
         """
         if not inspect.isgenerator(task):
-            raise ValueError('Object must be a generator')
+            raise TypeError('Object must be a generator')
         self.tasks.append(task)
 
     def set_player(self, player):
@@ -91,6 +94,9 @@ class Game:
         :param player:
         :return:
         """
+        if not isinstance(player, Player):
+            raise TypeError("Object must be Player")
+
         if self.player:
             self.player.kill()
         self.player = player
@@ -102,14 +108,27 @@ class Game:
         :param bullet:
         :return:
         """
+        if not isinstance(bullet, Bullet):
+            raise TypeError("Object must be a Bullet")
+
         self.objects.add(bullet)
         self.bullets.add(bullet)
         return bullet
 
     def add_bullets(self, *bullets):
+        """
+        Adds multiple bullets
+        :param bullets:
+        :return:
+        """
         return [self.add_bullet(b) for b in bullets]
 
     def add_script(self, module):
+        """
+        Adds a script to the end of the script queue
+        :param module:
+        :return:
+        """
         module = __import__(module)
         task = module.main(self)
         self.scripts.insert(0, task)
