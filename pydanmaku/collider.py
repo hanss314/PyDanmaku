@@ -109,6 +109,14 @@ class Collider:
         return center - distance, center + distance
 
     def collides(self, collider) -> bool:
+        max_dist = math.hypot(
+            (self.width + collider.width) / 2,
+            (self.height + collider.height) / 2
+        )
+
+        if max_dist < math.hypot(self.x - collider.x, self.y - collider.y):
+            return False
+
         check_ellipse = self.ellipse or collider.ellipse
         lines = {self.angle, self.angle+90, collider.angle, collider.angle+90}
         if check_ellipse:
