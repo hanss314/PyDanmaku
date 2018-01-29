@@ -10,3 +10,4 @@ dist
 # testing files
 test.py
 resources
+test_scripts
