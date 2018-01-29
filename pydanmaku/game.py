@@ -106,6 +106,9 @@ class Game:
         self.bullets.add(bullet)
         return bullet
 
+    def add_bullets(self, *bullets):
+        return [self.add_bullet(b) for b in bullets]
+
     def add_script(self, module):
         module = __import__(module)
         task = module.main(self)

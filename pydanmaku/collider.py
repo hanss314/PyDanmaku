@@ -93,12 +93,12 @@ class Collider:
             # The angle between collider and our point
             diangle = degs(math.atan2(py, px))
             angle -= diangle
-            distance = math.sqrt(py*py + px*px) * math.cos(rads(angle))
+            distance = math.hypot(py, px) * math.cos(rads(angle))
 
         else:
             # Take the diagonal of one of the quadrants, from the center to the farthest corner
             # Since we transformed it, only one corner can be the farthest
-            diagonal = math.sqrt(self.width * self.width + self.height * self.height) / 2
+            diagonal = math.hypot(self.width, self.height) / 2
             diangle = degs(math.atan2(self.height, self.width))
             # Angle(collider, axis) - Angle(collider, diagonal) = Angle(diagonal, axis)
             angle -= diangle
