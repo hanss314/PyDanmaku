@@ -71,7 +71,7 @@ class Collider:
         if angle > 90: angle = 180 - angle
 
         if self.ellipse:
-            # Uses the derivative of ellipse, dy/dx = (height**2) / (width ** 2) * x / y
+            # Uses the derivative of ellipse, dy/dx = -(height**2) / (width ** 2) * x / y
             coefficient = -self.height * self.height / (self.width * self.width)
             # Finds slope we need: (dy/dx), then finds the x/y value needed
             slope = math.tan(rads(angle - 90))
@@ -79,7 +79,7 @@ class Collider:
             # calculus and algebra to find the y coordinate
             py = self.height * self.width
             py *= math.sqrt(
-                1/(slope * slope * self.height * self.height + self.width * self.width)
+                1 / (slope * slope * self.height * self.height + self.width * self.width)
             ) / 2
             px = slope * py
             # The angle between collider and our point
@@ -107,18 +107,23 @@ class Collider:
         :return:
         """
         max_dist = math.hypot(
-            (self.width + collider.width) / 2,
-            (self.height + collider.height) / 2
-        )
+            self.width + collider.width,
+            self.height + collider.height
+        ) / 2
 
         if max_dist < math.hypot(self.x - collider.x, self.y - collider.y):
             return False
 
-        check_ellipse = self.ellipse or collider.ellipse
-        lines = {self.angle, self.angle+90, collider.angle, collider.angle+90}
-        if check_ellipse:
+        if self.height == self.width and collider.height == collider.width \
+          and self.ellipse and collider.ellipse:
+
+            dist = math.hypot(self.x - collider.x, self.y - collider.y)
+            return dist < (self.height + collider.height) / 2
+
+        lines = {self.angle, self.angle + 90, collider.angle, collider.angle + 90}
+        if self.ellipse or collider.ellipse:
             lines.add(degs(
-                math.atan2(self.y-collider.y, self.x-collider.x)
+                math.atan2(self.y - collider.y, self.x - collider.x)
             ))
 
         def overlap(angle):
