@@ -43,6 +43,13 @@ class Bullet(Object):
         super().step()
 
     def move_to(self, x, y, frames=0):
+        """
+        Move to a point over a certain number of frames
+        :param x:
+        :param y:
+        :param frames:
+        :return:
+        """
         if frames != 0:
             self.vx = (x - self.x) / frames
             self.vy = (y - self.y) / frames
@@ -51,6 +58,11 @@ class Bullet(Object):
             self.x, self.y = x, y
 
     def point_towards(self, obj):
+        """
+        Set the bullet to point towards an object
+        :param obj:
+        :return:
+        """
         self.angle = math.atan2(self.y - obj.y, self.x - obj.x)
 
     @property
