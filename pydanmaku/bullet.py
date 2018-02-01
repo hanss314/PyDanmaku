@@ -20,6 +20,7 @@ class Bullet(Object):
         self.acceleration = acceleration
         self.angular_momentum = angular_momentum
         self.base_image = self._image = img
+        self.stop_in = -1
         if angle is not None and speed is not None:
             self.speed = speed
 
@@ -34,7 +35,20 @@ class Bullet(Object):
         self.y += self.vy
         self.image = pygame.transform.rotate(self.base_image, -self.angle)
         self.collider.x, self.collider.y = self.x, self.y
+        if self.stop_in > 0:
+            self.stop_in -= 1
+        elif self.stop_in == 0:
+            self.speed = 0
+
         super().step()
+
+    def move_to(self, x, y, frames=0):
+        if frames != 0:
+            self.vx = (x - self.x) / frames
+            self.vy = (y - self.y) / frames
+            self.stop_in = frames
+        else:
+            self.x, self.y = x, y
 
     @property
     def speed(self):
