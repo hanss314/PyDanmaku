@@ -50,6 +50,9 @@ class Bullet(Object):
         else:
             self.x, self.y = x, y
 
+    def point_towards(self, obj):
+        self.angle = math.atan2(self.y - obj.y, self.x - obj.x)
+
     @property
     def speed(self):
         return math.sqrt(self.vx**2 + self.vy**2)
