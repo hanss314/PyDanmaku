@@ -5,6 +5,7 @@ from .pdobject import Object
 from .collider import Collider
 
 from math import radians as rads
+from math import degrees as degs
 
 
 class Bullet(Object):
@@ -21,6 +22,7 @@ class Bullet(Object):
         self.angular_momentum = angular_momentum
         self.base_image = self._image = img
         self.stop_in = -1
+        self.pattern = []
         if angle is not None and speed is not None:
             self.speed = speed
 
@@ -35,12 +37,30 @@ class Bullet(Object):
         self.y += self.vy
         self.image = pygame.transform.rotate(self.base_image, -self.angle)
         self.collider.x, self.collider.y = self.x, self.y
+        if self.pattern:
+            self.run_pattern()
         if self.stop_in > 0:
             self.stop_in -= 1
         elif self.stop_in == 0:
             self.speed = 0
 
         super().step()
+
+    def run_pattern(self):
+        nxt = self.pattern[0]
+        if 'wait' in nxt:
+            nxt['wait'] -= 1
+
+        if 'wait' not in nxt or nxt['wait'] <= 0:
+            nxt = self.pattern.pop(0)
+            for name in ['x', 'y', 'vx', 'vy', 'speed', 'angle']:
+                if name in nxt:
+                    setattr(self, name, nxt[name])
+
+            if 'exec' in nxt:
+                args = nxt['args'] if 'args' in nxt else ()
+                kwargs = nxt['kwargs'] if 'kwargs' in nxt else {}
+                nxt['exec'](*args, **kwargs)
 
     def move_to(self, x, y, frames=0):
         """
@@ -71,6 +91,8 @@ class Bullet(Object):
 
     @speed.setter
     def speed(self, value):
+        print(degs(math.atan2(self.vy, self.vx)))
+        self.angle = degs(math.atan2(self.vy, self.vx)) + (180 if self.vx < 0 else 0)
         self.vx = math.cos(rads(self._angle)) * value
         self.vy = math.sin(rads(self._angle)) * value
 
