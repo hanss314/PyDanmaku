@@ -1,0 +1,24 @@
+# Declaration of variables
+CC = g++
+CC_FLAGS = -shared -fPIC -I/usr/include/python3.7m \
+	-Wall -Wextra -Wno-unused-parameter -O2 -g \
+	-lSDL2 -lSDL2_image
+
+# File names
+SOURCES = danmaku.cpp bullet.cpp renderer.cpp
+OBJECTS = danmaku.so
+
+# Main target
+all: $(OBJECTS)
+
+# Object files
+%.so: $(SOURCES)
+	$(CC) $(CC_FLAGS) $(SOURCES) -o $@
+
+
+
+# To remove generated files
+clean:
+	rm -f *.so
+
+.PHONY: all run clean

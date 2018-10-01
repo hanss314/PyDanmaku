@@ -91,7 +91,6 @@ class Bullet(Object):
 
     @speed.setter
     def speed(self, value):
-        print(degs(math.atan2(self.vy, self.vx)))
         self.angle = degs(math.atan2(self.vy, self.vx)) + (180 if self.vx < 0 else 0)
         self.vx = math.cos(rads(self._angle)) * value
         self.vy = math.sin(rads(self._angle)) * value
