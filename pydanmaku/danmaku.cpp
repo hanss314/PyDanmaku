@@ -30,7 +30,6 @@ static PyObject* DanmakuGroup_del(PyObject *self, PyObject *args) {
 static PyObject* DanmakuGroup_run(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
     PyObject* capsule = PyObject_GetAttrString(self, "bullet_list");
-    std::list<Bullet> to_remove;
     std::list<Bullet> *bullets = (std::list<Bullet> *)PyCapsule_GetPointer(capsule, "bullet_list");
     std::list<Bullet>::iterator b = bullets->begin();
     while (b != bullets->end()){
@@ -52,14 +51,14 @@ static PyObject* DanmakuGroup_render(PyObject *self, PyObject *args) {
 }
 
 static PyObject* DanmakuGroup_add(PyObject *self, PyObject *args){
-    float x=0.0f;
-    float y=0.0f;
+    double x=0.0f;
+    double y=0.0f;
     int is_rect=false;
-    float height=0.0f, width=0.0f, radius=0.0f;
-    float angle=0.0f, speed=0.0f;
-    float acceleration=0.0f, angular_momentum=0.0f;
+    double height=0.0f, width=0.0f, radius=0.0f;
+    double angle=0.0f, speed=0.0f;
+    double acceleration=0.0f, angular_momentum=0.0f;
     if (!PyArg_ParseTuple(
-        args, "Offpf|fffff",
+        args, "Oddpd|ddddd",
         &self, &x, &y, &is_rect, &height, &width,
         &angle, &speed,
         &acceleration, &angular_momentum

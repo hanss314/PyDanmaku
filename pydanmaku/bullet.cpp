@@ -3,37 +3,37 @@
 #include <cstdio>
 #include "bullet.h"
 
-bool Bullet::run(float timestep){
+bool Bullet::run(double timestep){
     last_x = x;
     last_y = y;
     speed += acceleration * timestep;
     angle += angular_momentum * timestep;
-    angle = fmod(angle, (float) M_PIl * 2);
+    angle = fmod(angle, (double) M_PIl * 2);
     x += cosf(angle) * speed * timestep;
     y += sinf(angle) * speed * timestep;
-    if (x < -10 || x > 650 || y < -10 || y > 490) return true;
     return false;
+    //return x < -10 || x > 650 || y < -10 || y > 490;
 }
 
 
-Bullet::Bullet(float x, float y, float radius){
+Bullet::Bullet(double x, double y, double radius){
     Bullet(x, y, radius, 0.0f, 0.0f);
 }
 
-Bullet::Bullet(float x, float y, float width, float height){
+Bullet::Bullet(double x, double y, double width, double height){
     Bullet(x, y, width, height, 0.0f, 0.0f);
 }
 
-Bullet::Bullet(float x, float y, float radius, float speed, float angle){
+Bullet::Bullet(double x, double y, double radius, double speed, double angle){
     Bullet(x, y, radius, speed, angle, 0.0f, 0.0f);
 }
-Bullet::Bullet(float x, float y, float width, float height, float speed, float angle){
+Bullet::Bullet(double x, double y, double width, double height, double speed, double angle){
     Bullet(x, y, width, height, speed, angle, 0.0f, 0.0f);
 }
 
 Bullet::Bullet(
-        float x, float y, float radius,
-        float speed, float angle, float accel, float ang_m
+        double x, double y, double radius,
+        double speed, double angle, double accel, double ang_m
 ){
     this->x = this->last_x = x;
     this->y = this->last_y = y;
@@ -47,14 +47,14 @@ Bullet::Bullet(
 }
 
 Bullet:: Bullet(
-    float x, float y, float width, float height,
-    float speed, float angle, float accel, float ang_m
+    double x, double y, double width, double height,
+    double speed, double angle, double accel, double ang_m
 ){
     this->x = x;
     this->y = y;
     this->width = width;
     this->height = height;
-    this->radius = sqrtf(width*width + height*height);
+    this->radius = sqrt(width*width + height*height);
     this->is_rect = true;
     this->speed = speed;
     this->angle = angle;

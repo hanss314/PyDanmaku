@@ -4,27 +4,27 @@
 
 class Bullet {
 public:
-    float last_x;
-    float last_y;
-    float x;
-    float y;
-    float angle;
-    float speed;
-    float acceleration;
-    float angular_momentum;
+    double last_x;
+    double last_y;
+    double x;
+    double y;
+    double angle;
+    double speed;
+    double acceleration;
+    double angular_momentum;
     bool is_rect;
-    float height;
-    float width;
-    float radius;
+    double height;
+    double width;
+    double radius;
 
     Bullet() {};
-    Bullet(float x, float y, float radius);
-    Bullet(float x, float y, float width, float height);
-    Bullet(float x, float y, float radius, float speed, float angle);
-    Bullet(float x, float y, float width, float height, float speed, float angle);
-    Bullet(float x, float y, float radius, float speed, float angle, float accel, float ang_m);
-    Bullet(float x, float y, float width, float height, float speed, float angle, float accel, float ang_m);
-    bool run(float timestep);
+    Bullet(double x, double y, double radius);
+    Bullet(double x, double y, double width, double height);
+    Bullet(double x, double y, double radius, double speed, double angle);
+    Bullet(double x, double y, double width, double height, double speed, double angle);
+    Bullet(double x, double y, double radius, double speed, double angle, double accel, double ang_m);
+    Bullet(double x, double y, double width, double height, double speed, double angle, double accel, double ang_m);
+    bool run(double timestep);
 
 };
 

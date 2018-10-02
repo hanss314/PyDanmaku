@@ -2,10 +2,10 @@
 CC = g++
 CC_FLAGS = -shared -fPIC -I/usr/include/python3.7m \
 	-Wall -Wextra -Wno-unused-parameter -O2 -g \
-	-lSDL2 -lSDL2_image
+	-lGL -lGLU -lGLEW -lglfw -lfreeimage
 
 # File names
-SOURCES = danmaku.cpp bullet.cpp renderer.cpp
+SOURCES = danmaku.cpp bullet.cpp renderer.cpp common/shader.cpp common/png.cpp
 OBJECTS = danmaku.so
 
 # Main target
