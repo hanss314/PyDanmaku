@@ -41,7 +41,7 @@ Bullet::Bullet(
     this->width = this->height = radius;
     this->is_rect = false;
     this->speed = speed;
-    this->angle = angle;
+    this->angle = fmod(angle, 2*M_PI);
     this->acceleration = accel;
     this->angular_momentum = ang_m;
 }
@@ -57,7 +57,7 @@ Bullet:: Bullet(
     this->radius = sqrt(width*width + height*height);
     this->is_rect = true;
     this->speed = speed;
-    this->angle = angle;
+    this->angle = fmod(angle, 2*M_PI);
     this->acceleration = accel;
     this->angular_momentum = ang_m;
 }

@@ -197,6 +197,9 @@ void render_bullets(std::list<Bullet> *bullets){
 }
 
 void renderer_close() {
+    delete [] vertices_position;
+    delete [] indices;
+    delete [] texture_coord;
     glfwTerminate();
     render_inited = false;
 }

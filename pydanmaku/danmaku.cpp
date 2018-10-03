@@ -6,11 +6,6 @@
 #include "bullet.h"
 #include "renderer.h"
 
-void deleteBullets(PyObject* capsule){
-    std::list<Bullet> *bullets = (std::list<Bullet> *)PyCapsule_GetPointer(capsule, "bullet_list");
-    bullets->clear();
-}
-
 static PyObject* DanmakuGroup_init(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
     static std::list<Bullet> bullet_list;

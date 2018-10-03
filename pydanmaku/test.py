@@ -19,7 +19,6 @@ def framerate():
     time.sleep(to_wait)
 
 x = danmaku.DanmakuGroup()
-x.add_bullet(320, 240, False, 1, 1, 0, 0, 0, 0.01)
 i = 0
 try:
     danmaku.init()
@@ -27,6 +26,11 @@ try:
     i = 0
     while True:
         i+=1
+    
+        if i%2 == 0: 
+            #x.add_bullet(320, 400, True, 1, 1, i/60+pi/2, 4, 0.0)
+            x.add_bullet(320, 400, True, 1, 1, -i/60+pi/2, 4, 0.0)
+
         x.run()
         x.render()
         #framerate()
