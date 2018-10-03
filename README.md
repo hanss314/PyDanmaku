@@ -1,6 +1,8 @@
 # PyDanmaku
 A danmaku engine in python
 
-This is still in development and is undocumented.
+This has not been updated on PyPI
 
-Feel free to install if you want to play around with what I've made so far.
+I have reworked the engine and it is not ready yet. setup.py doesn't work
+
+Basic bullet creation and rendering has been implemented
