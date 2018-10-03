@@ -16,6 +16,7 @@ using namespace glm;
 #include <FreeImage.h>
 #include "common/shader.h"
 #include "common/png.h"
+#include "common/trig.h"
 
 #include "renderer.h"
 
@@ -96,8 +97,8 @@ void initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat tex
 }
 
 void apply_angle(double *x, double *y, double angle){
-    double c = cos(angle);
-    double s = sin(angle);
+    double c = l_cos(angle);
+    double s = l_sin(angle);
     double nx = (*x)*c - (*y)*s;
     double ny = (*x)*s + (*y)*c;
     *x = nx;
@@ -127,6 +128,7 @@ void add_quad(GLfloat vert[], GLuint ind[], GLfloat tex[], int i, double x, doub
 }
 
 void renderer_init() {
+    trig_init();
     glfwInit();
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

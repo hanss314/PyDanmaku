@@ -6,7 +6,7 @@ CC_FLAGS = -shared -fPIC -I/usr/include/python3.7m \
 #	-static-libasan -fsanitize=address,undefined
 
 # File names
-SOURCES = danmaku.cpp bullet.cpp renderer.cpp common/shader.cpp common/png.cpp
+SOURCES = danmaku.cpp bullet.cpp renderer.cpp common/shader.cpp common/png.cpp common/trig.cpp
 OBJECTS = danmaku.so
 
 # Main target
