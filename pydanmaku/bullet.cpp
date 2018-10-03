@@ -11,8 +11,8 @@ bool Bullet::run(double timestep){
     angle = fmod(angle, (double) M_PIl * 2);
     x += cosf(angle) * speed * timestep;
     y += sinf(angle) * speed * timestep;
-    return false;
-    //return x < -10 || x > 650 || y < -10 || y > 490;
+    //return false;
+    return x < -10 || x > 650 || y < -10 || y > 490;
 }
 
 

@@ -30,33 +30,31 @@ GLuint shader;
 BYTE* amuletImage;
 int w=0, h=0;
 
+GLuint vao, vbo, eab;
 
-
-GLuint initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat texture_coord[], int count) {
+void initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat texture_coord[], int count) {
     // Use a Vertex Array Object
 
-    GLuint vao;
+
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     // Create a Vector Buffer Object that will store the vertices on video memory
-    GLuint vbo;
     glGenBuffers(1, &vbo);
     // Allocate space for vertex positions and texture coordinates
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, 8*count + 8*count, NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 16*count*sizeof(GLfloat), NULL, GL_STATIC_DRAW);
 
     // Transfer the vertex positions:
-    glBufferSubData(GL_ARRAY_BUFFER, 0, 8*count, vertices_position);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 8*count*sizeof(GLfloat), vertices_position);
     // Transfer the texture coordinates:
-    glBufferSubData(GL_ARRAY_BUFFER, 8*count, 8*count, texture_coord);
+    glBufferSubData(GL_ARRAY_BUFFER, 8*count* sizeof(GLfloat), 8*count*sizeof(GLfloat), texture_coord);
 
     // Create an Element Array Buffer that will store the indices array:
-    GLuint eab;
     glGenBuffers(1, &eab);
 
     // Transfer the data from indices to eab
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*count, indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*count*sizeof(GLuint), indices, GL_STATIC_DRAW);
 
     // Create a texture
     GLuint texture;
@@ -84,9 +82,10 @@ GLuint initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat t
 
     // Texture coord attribute
     GLint texture_coord_attribute = glGetAttribLocation(shader, "texture_coord");
-    glVertexAttribPointer(texture_coord_attribute, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(8*count));
+    glVertexAttribPointer(texture_coord_attribute, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(8*count*sizeof(GLfloat)));
     glEnableVertexAttribArray(texture_coord_attribute);
-    return vao;
+    static const GLuint *buffers[3] = {&vao, &vbo, &eab};
+    return buffers;
 }
 
 void add_quad(GLfloat vert[], GLuint ind[], GLfloat tex[], int i, double lx, double hx, double ly, double hy){
@@ -100,8 +99,8 @@ void add_quad(GLfloat vert[], GLuint ind[], GLfloat tex[], int i, double lx, dou
     ind[6*i+1] =              4*i+1;
     ind[6*i+4] =              4*i+3;
 
-    tex[6*i+0] = tex[6*i+1] = tex[6*i+3] = tex[6*i+6] = 0.0;
-    tex[6*i+2] = tex[6*i+4] = tex[6*i+5] = tex[6*i+7] = 1.0;
+    tex[8*i+0] = tex[8*i+1] = tex[8*i+3] = tex[8*i+6] = 0.0;
+    tex[8*i+2] = tex[8*i+4] = tex[8*i+5] = tex[8*i+7] = 1.0;
 }
 
 void renderer_init() {
@@ -139,13 +138,9 @@ void renderer_init() {
     glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
     shader = create_program("shaders/vert.shader", "shaders/frag.shader");
     amuletImage = load_image(AMULET, &w, &h);
+
     render_inited = true;
 
-}
-
-void render_bullet(Bullet bullet){
-    //GLuint vao = initialize_quad(bullet.x, bullet.y);
-    //glBindVertexArray(vao);
 }
 
 void render_bullets(std::list<Bullet> *bullets){
@@ -159,16 +154,20 @@ void render_bullets(std::list<Bullet> *bullets){
     for (std::list<Bullet>::iterator b = bullets->begin(); b != bullets->end(); b++){
         double lx = XU*(b->x - w/2.0)-1.0, hx = XU*(b->x + w/2.0)-1.0;
         double ly = YU*(b->y - h/2.0)-1.0, hy = YU*(b->y + h/2.0)-1.0;
-        add_quad(vertices_position, indices, texture_coord,  i, lx, hx, ly, hy);
+        add_quad(vertices_position, indices, texture_coord, i, lx, hx, ly, hy);
         i++;
     }
-    GLuint vao = initialize_quads(vertices_position, indices, texture_coord, count);
+    initialize_quads(vertices_position, indices, texture_coord, count);
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, count*6, GL_UNSIGNED_INT, 0);
     glfwSwapBuffers(window);
+
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &eab);
+    glDeleteVertexArrays(1, &vao);
 }
 
 void renderer_close() {
-
+    glfwTerminate();
     render_inited = false;
 }
