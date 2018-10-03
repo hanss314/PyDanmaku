@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include "bullet.h"
 
+#include <math.h>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -31,6 +33,12 @@ BYTE* amuletImage;
 int w=0, h=0;
 
 GLuint vao, vbo, eab;
+
+int last_size=0;
+
+GLfloat *vertices_position;
+GLuint *indices;
+GLfloat *texture_coord;
 
 void initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat texture_coord[], int count) {
     // Use a Vertex Array Object
@@ -87,11 +95,27 @@ void initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat tex
     
 }
 
-void add_quad(GLfloat vert[], GLuint ind[], GLfloat tex[], int i, double lx, double hx, double ly, double hy){
-    vert[8*i+0] = vert[8*i+2] = lx;
-    vert[8*i+4] = vert[8*i+6] = hx;
-    vert[8*i+1] = vert[8*i+7] = ly;
-    vert[8*i+3] = vert[8*i+5] = hy;
+void apply_angle(double *x, double *y, double angle){
+    double c = cos(angle);
+    double s = sin(angle);
+    double nx = (*x)*c - (*y)*s;
+    double ny = (*x)*s + (*y)*c;
+    *x = nx;
+    *y = ny;
+}
+
+void add_quad(GLfloat vert[], GLuint ind[], GLfloat tex[], int i, double x, double y, double h, double w, double angle){
+    double coords[8] = {
+         -w/2.0, -h/2.0,
+          w/2.0, -h/2.0,
+          w/2.0,  h/2.0,
+         -w/2.0,  h/2.0,
+    };
+    for (int j=0; j<8; j+=2){
+        apply_angle(&(coords[j]), &(coords[j+1]), angle);
+        vert[8*i+j]   = XU*(coords[j]   + x)-1.0;
+        vert[8*i+j+1] = YU*(coords[j+1] + y)-1.0;
+    }
 
     ind[6*i+0] = ind[6*i+5] = 4*i+0;
     ind[6*i+2] = ind[6*i+3] = 4*i+2;
@@ -134,7 +158,7 @@ void renderer_init() {
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     // Dark blue background
-    glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
     shader = create_program("shaders/vert.shader", "shaders/frag.shader");
     amuletImage = load_image(AMULET, &w, &h);
 
@@ -146,14 +170,18 @@ void render_bullets(std::list<Bullet> *bullets){
     if(!render_inited) return;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     int count = bullets->size();
-    GLfloat vertices_position[count * 8];
-    GLuint indices[count * 6];
-    GLfloat texture_coord[count * 8];
+    if (count > last_size) {
+        delete [] vertices_position;
+        delete [] indices;
+        delete [] texture_coord;
+        vertices_position = new GLfloat[count * 8];
+        indices = new GLuint[count * 6];
+        texture_coord = new GLfloat[count * 8];
+        last_size = count;
+    }
     int i = 0;
     for (std::list<Bullet>::iterator b = bullets->begin(); b != bullets->end(); b++){
-        double lx = XU*(b->x - w/2.0)-1.0, hx = XU*(b->x + w/2.0)-1.0;
-        double ly = YU*(b->y - h/2.0)-1.0, hy = YU*(b->y + h/2.0)-1.0;
-        add_quad(vertices_position, indices, texture_coord, i, lx, hx, ly, hy);
+        add_quad(vertices_position, indices, texture_coord, i, b->x, b->y, h, w, b->angle);
         i++;
     }
     initialize_quads(vertices_position, indices, texture_coord, count);
