@@ -27,7 +27,7 @@ try:
     while True:
         i+=1
         for j in range(10):
-            x.add_bullet(320, 240, False, 1, 1, 100*sin(i/400) + j*pi/5, 3, 0, 0)
+            x.add_bullet(320, 240, False, 10, 15, 100*sin(i/400) + j*pi/5, 3, 0, 0)
         x.run()
         x.render()
         #framerate()

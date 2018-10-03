@@ -2,7 +2,7 @@
 import danmaku
 import random
 import time
-from math import pi, sin
+from math import pi, sin, atan2, cos, hypot
 
 FPS = 60
 wait = 1/FPS
@@ -18,21 +18,35 @@ def framerate():
         print('bad'); return
     time.sleep(to_wait)
 
-x = danmaku.DanmakuGroup()
+manager = danmaku.DanmakuGroup()
+manager.add_bullet(320, 400, True, 1, 1, 3*pi/2, 4, 0.0)
 i = 0
 try:
     danmaku.init()
     start = time.time()
     i = 0
+    x, y = 320, 400
+    nx, ny = x, y
+    print("hi")
     while True:
         i+=1
-    
-        if i%2 == 0: 
-            x.add_bullet(320, 400, True, 1, 1, i/60+pi/2, 4, 0.0)
-            x.add_bullet(320, 400, True, 1, 1, -i/60+pi/2, 4, 0.0)
+        """
+        if i%3 == 0: 
+            for j in range(4):
+                manager.add_bullet(x, y, True, 1, 1, i/60+j*pi/2, 4, 0.0)
+                manager.add_bullet(x, y, True, 1, 1, -i/60+j*pi/2, 4, 0.0)
 
-        x.run()
-        x.render()
+        if i%150 == 0:
+            nx = random.randint(max(100, x-50), min(540, x+50))
+            ny = random.randint(max(350, y-50), min(450, y+50))
+
+        a = atan2(ny-y, nx-x)
+        dist = hypot(ny-y, nx-x)
+        x += cos(a)*min(dist, 1)
+        y += sin(a)*min(dist, 1)
+        """
+        manager.run()
+        manager.render()
         #framerate()
 
 finally:

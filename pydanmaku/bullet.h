@@ -16,6 +16,10 @@ public:
     double height;
     double width;
     double radius;
+    double c, s; // cos and sin
+
+    bool broad_search(double x, double y, double radius);
+    bool collides(double x, double y, double radius);
 
     Bullet() {};
     Bullet(double x, double y, double radius);

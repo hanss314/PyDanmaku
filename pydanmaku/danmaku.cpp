@@ -22,6 +22,13 @@ static PyObject* DanmakuGroup_del(PyObject *self, PyObject *args) {
     Py_RETURN_NONE;
 }
 
+bool check_collisions(std::list<Bullet> *bullets){
+    for (std::list<Bullet>::iterator b = bullets->begin(); b != bullets->end(); b++){
+        if(b->collides(320.0, 240.0, 1.0)) return true;
+    }
+    return false;
+}
+
 static PyObject* DanmakuGroup_run(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
     PyObject* capsule = PyObject_GetAttrString(self, "bullet_list");
@@ -34,6 +41,7 @@ static PyObject* DanmakuGroup_run(PyObject *self, PyObject *args) {
             b++;
         }
     }
+    if (check_collisions(bullets)) std::cout << "Collision!" << std::endl;
     Py_RETURN_NONE;
 }
 

@@ -3,7 +3,7 @@
 //
 
 #include <math.h>
-#define GRANULARITY 256
+#define GRANULARITY 1024
 
 bool trig_inited = false;
 double lookup_table[GRANULARITY+1];
