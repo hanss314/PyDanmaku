@@ -28,7 +28,7 @@ try:
         i+=1
     
         if i%2 == 0: 
-            #x.add_bullet(320, 400, True, 1, 1, i/60+pi/2, 4, 0.0)
+            x.add_bullet(320, 400, True, 1, 1, i/60+pi/2, 4, 0.0)
             x.add_bullet(320, 400, True, 1, 1, -i/60+pi/2, 4, 0.0)
 
         x.run()

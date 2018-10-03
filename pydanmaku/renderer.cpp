@@ -56,7 +56,7 @@ void initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat tex
     // Transfer the vertex positions:
     glBufferSubData(GL_ARRAY_BUFFER, 0, 8*count*sizeof(GLfloat), vertices_position);
     // Transfer the texture coordinates:
-    glBufferSubData(GL_ARRAY_BUFFER, 8*count* sizeof(GLfloat), 8*count*sizeof(GLfloat), texture_coord);
+    glBufferSubData(GL_ARRAY_BUFFER, 8*count*sizeof(GLfloat), 8*count*sizeof(GLfloat), texture_coord);
 
     // Create an Element Array Buffer that will store the indices array:
     glGenBuffers(1, &eab);
@@ -172,13 +172,13 @@ void render_bullets(std::list<Bullet> *bullets){
     if(!render_inited) return;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     int count = bullets->size();
-    if (count > last_size) {
+    if (count > last_size || last_size == 0) {
         delete [] vertices_position;
         delete [] indices;
         delete [] texture_coord;
-        vertices_position = new GLfloat[count * 8];
-        indices = new GLuint[count * 6];
-        texture_coord = new GLfloat[count * 8];
+        vertices_position = new GLfloat[8*count];
+        indices = new GLuint[6*count];
+        texture_coord = new GLfloat[8*count];
         last_size = count;
     }
     int i = 0;
@@ -188,7 +188,7 @@ void render_bullets(std::list<Bullet> *bullets){
     }
     initialize_quads(vertices_position, indices, texture_coord, count);
     glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, count*6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 6*count, GL_UNSIGNED_INT, 0);
     glfwSwapBuffers(window);
 
     glDeleteBuffers(1, &vbo);
