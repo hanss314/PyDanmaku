@@ -84,8 +84,7 @@ void initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat tex
     GLint texture_coord_attribute = glGetAttribLocation(shader, "texture_coord");
     glVertexAttribPointer(texture_coord_attribute, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(8*count*sizeof(GLfloat)));
     glEnableVertexAttribArray(texture_coord_attribute);
-    static const GLuint *buffers[3] = {&vao, &vbo, &eab};
-    return buffers;
+    
 }
 
 void add_quad(GLfloat vert[], GLuint ind[], GLfloat tex[], int i, double lx, double hx, double ly, double hy){
