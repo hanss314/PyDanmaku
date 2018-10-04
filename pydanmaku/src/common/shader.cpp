@@ -11,6 +11,7 @@ using namespace std;
 #include <string.h>
 
 #include <GL/glew.h>
+#include "../../include/common/shader.h"
 
 void read_shader_src(const char *fname, std::vector<char> &buffer) {
     std::ifstream in;

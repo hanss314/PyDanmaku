@@ -3,8 +3,8 @@
 #include <math.h>
 #include <list>
 #include <iostream>
-#include "bullet.h"
-#include "renderer.h"
+#include "../include/bullet.h"
+#include "../include/renderer.h"
 
 static PyObject* DanmakuGroup_init(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "O", &self)) return NULL;

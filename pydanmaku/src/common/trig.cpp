@@ -3,6 +3,8 @@
 //
 
 #include <math.h>
+#include "../../include/common/trig.h"
+
 #define GRANULARITY 1024
 
 bool trig_inited = false;
