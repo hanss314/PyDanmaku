@@ -29,9 +29,13 @@ bool Bullet::collides(double x, double y, double radius){
     // transform to 0,0
     x -= this->x;
     y -= this->y;
+
     // transform so rotation is 0
-    double tx = x*this->c - y*this->s;
-    double ty = x*this->s + y*this->c;
+    // normal equation is x = xcos - ysin; y = xsin + ycos
+    // we're reversing the rotation, cos(-a) = cos(a), sin(-a) = -sin(a)
+    // equation becomes x = xcos + ysin; y = ycos-xsin
+    double tx = x*this->c + y*this->s;
+    double ty = y*this->c - x*this->s;
 
     // move into one quadrant
     if (tx < 0) tx = -tx;

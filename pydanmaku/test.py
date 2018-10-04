@@ -19,7 +19,6 @@ def framerate():
     time.sleep(to_wait)
 
 manager = danmaku.DanmakuGroup()
-manager.add_bullet(320, 400, True, 1, 1, 3*pi/2, 4, 0.0)
 i = 0
 try:
     danmaku.init()
@@ -30,11 +29,11 @@ try:
     print("hi")
     while True:
         i+=1
-        """
-        if i%3 == 0: 
-            for j in range(4):
-                manager.add_bullet(x, y, True, 1, 1, i/60+j*pi/2, 4, 0.0)
-                manager.add_bullet(x, y, True, 1, 1, -i/60+j*pi/2, 4, 0.0)
+        if i%2 == 0: 
+            for j in range(8):
+                if i > 100:
+                    manager.add_bullet(x, y, True, 1, 1, i/30+j*pi/4, 4, 0.0)
+                manager.add_bullet(x, y, True, 1, 1, -i/21+j*pi/4, 2.1, 0.0)
 
         if i%150 == 0:
             nx = random.randint(max(100, x-50), min(540, x+50))
@@ -44,7 +43,6 @@ try:
         dist = hypot(ny-y, nx-x)
         x += cos(a)*min(dist, 1)
         y += sin(a)*min(dist, 1)
-        """
         manager.run()
         manager.render()
         #framerate()
