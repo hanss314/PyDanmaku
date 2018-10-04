@@ -20,12 +20,12 @@ pydanmaku = Extension('pydanmaku',
                 libraries=['GL', 'GLU', 'GLEW', 'glfw', 'freeimage'],
                 data_files=['images/amulet.png', 'shaders/frag.shader', 'shaders/vert.shader'],
                 sources=[
-                    'src/danmaku.cpp',
-                    'src/bullet.cpp',
-                    'src/renderer.cpp,'
-                    'src/common/shader.cpp',
-                    'src/common/png.cpp',
-                    'src/common/trig.cpp'
+                    'pydanmaku/src/danmaku.cpp',
+                    'pydanmaku/src/bullet.cpp',
+                    'pydanmaku/src/renderer.cpp',
+                    'pydanmaku/src/common/shader.cpp',
+                    'pydanmaku/src/common/png.cpp',
+                    'pydanmaku/src/common/trig.cpp'
                 ],
             )
 
