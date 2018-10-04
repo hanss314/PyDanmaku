@@ -1,7 +1,6 @@
 # Declaration of variables
 CC = g++
 CC_FLAGS = -std=c++11 -shared -fPIC -I/usr/include/python3.7m \
-	$(python3-config --include) \
 	-Wall -Wextra -Wno-unused-parameter -O2 -g \
 	-lGL -lGLU -lGLEW -lglfw -lfreeimage \
 #	-static-libasan -fsanitize=address,undefined
