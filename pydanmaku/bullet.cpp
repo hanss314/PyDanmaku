@@ -24,66 +24,57 @@ bool Bullet::broad_search(double x, double y, double radius){
 }
 
 bool Bullet::collides(double x, double y, double radius){
-    if (!this->is_rect){
-        return this->broad_search(x, y, radius);
-    } // is rect
     if (!this->broad_search(x, y, radius)) return false;
+
+    // transform to 0,0
     x -= this->x;
     y -= this->y;
-
+    // transform so rotation is 0
     double tx = x*this->c - y*this->s;
     double ty = x*this->s + y*this->c;
+
+    // move into one quadrant
     if (tx < 0) tx = -tx;
     if (ty < 0) ty = -ty;
+
+    // extents in quadrant
     double w = this->width/2, h = this->height/2;
-    if ((tx+radius<=w && ty<=h) || (ty+radius<=h && tx<=w)) return true;
-    double dx = tx - h, dy = tx - w;
-    return sqrt(dx*dx + dy*dy) <= radius;
+
+    if (this->is_rect) {
+        // is it intersecting the top or right?
+        if ((tx + radius <= w && ty <= h) || (ty + radius <= h && tx <= w)) return true;
+        // find distance from corner and test if intersecting corner
+        double dx = tx - h, dy = tx - w;
+        return sqrt(dx * dx + dy * dy) <= radius;
+    } else {
+        // extend ellipse by radius of circle
+        // will test if the centre of the circle is within the bigger ellipse
+        w += radius; h += radius;
+        // transform to a unit circle
+        x /= w; y /= h;
+        // if we're within the unit circle, we were within the bigger ellipse
+        return sqrt(x*x + y*y) <= 1;
+    }
 
 
-}
-
-
-Bullet::Bullet(double x, double y, double radius){
-    Bullet(x, y, radius, 0.0f, 0.0f);
-}
-
-Bullet::Bullet(double x, double y, double width, double height){
-    Bullet(x, y, width, height, 0.0f, 0.0f);
-}
-
-Bullet::Bullet(double x, double y, double radius, double speed, double angle){
-    Bullet(x, y, radius, speed, angle, 0.0f, 0.0f);
-}
-Bullet::Bullet(double x, double y, double width, double height, double speed, double angle){
-    Bullet(x, y, width, height, speed, angle, 0.0f, 0.0f);
-}
-
-Bullet::Bullet(
-        double x, double y, double radius,
-        double speed, double angle, double accel, double ang_m
-){
-    this->x = this->last_x = x;
-    this->y = this->last_y = y;
-    this->radius = radius;
-    this->width = this->height = radius;
-    this->is_rect = false;
-    this->speed = speed;
-    this->angle = fmod(angle, 2*M_PI);
-    this->acceleration = accel;
-    this->angular_momentum = ang_m;
 }
 
 Bullet:: Bullet(
-    double x, double y, double width, double height,
+    double x, double y, bool is_rect, double width, double height,
     double speed, double angle, double accel, double ang_m
 ){
     this->x = x;
     this->y = y;
     this->width = width;
     this->height = height;
-    this->radius = sqrt(width*width + height*height);
-    this->is_rect = true;
+    if (is_rect) {
+        this->radius = sqrt(width * width + height * height);
+    } else if (width > height){
+        this->radius = width;
+    } else {
+        this->radius = height;
+    }
+    this->is_rect = is_rect;
     this->speed = speed;
     this->angle = fmod(angle, 2*M_PI);
     this->acceleration = accel;

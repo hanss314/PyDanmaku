@@ -57,9 +57,10 @@ static PyObject* DanmakuGroup_add(PyObject *self, PyObject *args){
     double x=0.0f;
     double y=0.0f;
     int is_rect=false;
-    double height=0.0f, width=0.0f, radius=0.0f;
+    double height=0.0f, width=0.0f;
     double angle=0.0f, speed=0.0f;
     double acceleration=0.0f, angular_momentum=0.0f;
+    //TODO: make nothing optional and move the arg handling to a python file. also make this private
     if (!PyArg_ParseTuple(
         args, "Oddpd|ddddd",
         &self, &x, &y, &is_rect, &height, &width,
@@ -68,18 +69,11 @@ static PyObject* DanmakuGroup_add(PyObject *self, PyObject *args){
     )) {return NULL;}
     if(is_rect && width == 0.0f){
         width = height;
-    }else if(!is_rect){
-        radius = width;
     }
-
     PyObject* capsule = PyObject_GetAttrString(self, "bullet_list");
     std::list<Bullet> *bullets = (std::list<Bullet> *)PyCapsule_GetPointer(capsule, "bullet_list");
     static Bullet bullet;
-    if(is_rect){
-        bullet = Bullet(x, y, width, height, speed, angle, acceleration, angular_momentum);
-    } else {
-        bullet = Bullet(x, y, radius, speed, angle, acceleration, angular_momentum);
-    }
+    bullet = Bullet(x, y, (bool)is_rect, width, height, speed, angle, acceleration, angular_momentum);
     bullets->emplace_front(bullet);
     Py_RETURN_NONE;
 }
