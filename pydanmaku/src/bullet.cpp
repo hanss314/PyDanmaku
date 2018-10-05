@@ -65,7 +65,7 @@ bool Bullet::collides(double x, double y, double radius){
 
 Bullet:: Bullet(
     double x, double y, bool is_rect, double width, double height,
-    double speed, double angle, double accel, double ang_m
+    double speed, double angle, double accel, double ang_m, char* tex
 ){
     this->x = x;
     this->y = y;
@@ -83,6 +83,7 @@ Bullet:: Bullet(
     this->angle = fmod(angle, 2*M_PI);
     this->acceleration = accel;
     this->angular_momentum = ang_m;
+    this->texture = tex;
 }
 
 
