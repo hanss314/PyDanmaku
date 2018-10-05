@@ -20,7 +20,7 @@ def framerate():
 """
 
 x = danmaku.DanmakuGroup()
-for i in range(100000):
+for i in range(90000):
     x.add_bullet(320, 400, True, 1, 1, i, 1, 0, 0.0)
 
 try:

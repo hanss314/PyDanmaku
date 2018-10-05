@@ -41,7 +41,7 @@ static PyObject* DanmakuGroup_run(PyObject *self, PyObject *args) {
             b++;
         }
     }
-    if (check_collisions(bullets)) std::cout << "Collision!" << std::endl;
+    // if (check_collisions(bullets)) std::cout << "Collision!" << std::endl;
     Py_RETURN_NONE;
 }
 
@@ -72,9 +72,8 @@ static PyObject* DanmakuGroup_add(PyObject *self, PyObject *args){
     }
     PyObject* capsule = PyObject_GetAttrString(self, "bullet_list");
     std::list<Bullet> *bullets = (std::list<Bullet> *)PyCapsule_GetPointer(capsule, "bullet_list");
-    static Bullet bullet;
-    bullet = Bullet(x, y, (bool)is_rect, width, height, speed, angle, acceleration, angular_momentum);
-    bullets->emplace_front(bullet);
+    Bullet b(x, y, (bool)is_rect, width, height, speed, angle, acceleration, angular_momentum);
+    bullets->emplace_front(b);
     Py_RETURN_NONE;
 }
 
