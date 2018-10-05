@@ -24,7 +24,7 @@ using namespace glm;
 #define HEIGHT 480
 #define XU 2.0/WIDTH
 #define YU 2.0/HEIGHT
-#define AMULET "../images/amulet.png"
+#define AMULET "images/amulet.png"
 
 GLFWwindow* window;
 bool render_inited = false;
@@ -161,7 +161,7 @@ void renderer_init() {
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     // Dark blue background
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-    shader = create_program("../shaders/vert.shader", "../shaders/frag.shader");
+    shader = create_program("./shaders/vert.shader", "./shaders/frag.shader");
     amuletImage = load_image(AMULET, &w, &h);
 
     render_inited = true;
