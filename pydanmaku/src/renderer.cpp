@@ -41,7 +41,7 @@ GLfloat *vertices_position;
 GLuint *indices;
 GLfloat *texture_coord;
 
-void initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat texture_coord[], int count) {
+void initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat texture_coord[], int count, Bullet& bullet) {
     // Use a Vertex Array Object
 
 
@@ -76,6 +76,9 @@ void initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat tex
     glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
     glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
     // start load_image
+    if(bullet.texture) {
+        amuletImage = load_image(bullet.texture, &w, &h);
+    }
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, amuletImage);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -186,7 +189,7 @@ void render_bullets(std::list<Bullet> *bullets){
         add_quad(vertices_position, indices, texture_coord, i, b->x, b->y, h, w, b->angle);
         i++;
     }
-    initialize_quads(vertices_position, indices, texture_coord, count);
+    initialize_quads(vertices_position, indices, texture_coord, count, bullets->front());
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6*count, GL_UNSIGNED_INT, 0);
     glfwSwapBuffers(window);
