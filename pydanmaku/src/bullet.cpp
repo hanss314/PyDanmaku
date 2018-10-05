@@ -2,14 +2,14 @@
 #include <math.h>
 #include <cstdio>
 #include <iostream>
-#include "bullet.h"
+#include "../include/bullet.h"
 
 bool Bullet::run(double timestep){
     last_x = x;
     last_y = y;
     speed += acceleration * timestep;
     angle += angular_momentum * timestep;
-    angle = fmod(angle, (double) M_PIl * 2);
+    angle = fmod(angle, (double) M_PI * 2);
     this->s = sinf(angle);
     this->c = cosf(angle);
     x += this->c * speed * timestep;

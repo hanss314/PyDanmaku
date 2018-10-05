@@ -4,7 +4,7 @@
 
 #include <list>
 #include <stdbool.h>
-#include "bullet.h"
+#include "../include/bullet.h"
 
 #include <math.h>
 
@@ -14,17 +14,17 @@
 using namespace glm;
 
 #include <FreeImage.h>
-#include "common/shader.h"
-#include "common/png.h"
-#include "common/trig.h"
+#include "../include/common/shader.h"
+#include "../include/common/png.h"
+#include "../include/common/trig.h"
 
-#include "renderer.h"
+#include "../include/renderer.h"
 
 #define WIDTH 640
 #define HEIGHT 480
 #define XU 2.0/WIDTH
 #define YU 2.0/HEIGHT
-#define AMULET "./amulet.png"
+#define AMULET "../images/amulet.png"
 
 GLFWwindow* window;
 bool render_inited = false;
@@ -161,7 +161,7 @@ void renderer_init() {
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     // Dark blue background
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-    shader = create_program("shaders/vert.shader", "shaders/frag.shader");
+    shader = create_program("../shaders/vert.shader", "../shaders/frag.shader");
     amuletImage = load_image(AMULET, &w, &h);
 
     render_inited = true;

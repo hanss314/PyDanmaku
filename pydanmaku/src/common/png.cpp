@@ -1,4 +1,5 @@
 #include <FreeImage.h>
+#include "../../include/common/png.h"
 
 BYTE* load_image(const char *fname, int* width, int* height) {
     static BYTE *data = NULL;
