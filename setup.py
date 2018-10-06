@@ -5,8 +5,7 @@ import re
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-with open('pydanmaku/__init__.py') as f:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
+version = '0.0.1b' 
 
 if not version:
     raise RuntimeError('version is not set')

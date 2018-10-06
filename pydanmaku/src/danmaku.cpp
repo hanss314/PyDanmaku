@@ -138,7 +138,7 @@ PyObject *createClassObject(const char *name, PyMethodDef methods[])
     return pClass;
 }
 
-PyMODINIT_FUNC PyInit_danmaku(void) {
+PyMODINIT_FUNC PyInit_pydanmaku(void) {
     PyObject *module;
     module = PyModule_Create(&danmakumodule);
     PyObject* danmakuGroup = createClassObject("DanmakuGroup", DanmakuGroupMethods);

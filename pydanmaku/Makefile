@@ -7,7 +7,7 @@ CC_FLAGS = -std=c++11 -shared -fPIC -I/usr/include/python3.7m \
 
 # File names
 SOURCES = src/danmaku.cpp src/bullet.cpp src/renderer.cpp src/common/shader.cpp src/common/png.cpp src/common/trig.cpp
-OBJECTS = danmaku.so
+OBJECTS = pydanmaku.so
 
 # Main target
 all: $(OBJECTS)
