@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import danmaku
+import pydanmaku as pd
 import random
 import time
 from math import pi, sin
@@ -18,10 +18,10 @@ def framerate():
         print('bad'); return
     time.sleep(to_wait)
 
-x = danmaku.DanmakuGroup()
+x = pd.DanmakuGroup()
 i = 0
 try:
-    danmaku.init()
+    pd.init()
     start = time.time()
     i = 0
     while True:
@@ -33,5 +33,5 @@ try:
         #framerate()
 
 finally:
-    danmaku.close()
+    pd.close()
 

@@ -24,7 +24,7 @@ using namespace glm;
 #define HEIGHT 480
 #define XU 2.0/WIDTH
 #define YU 2.0/HEIGHT
-#define AMULET "images/amulet.png"
+#define AMULET "images/rice.png"
 
 GLFWwindow* window;
 bool render_inited = false;
@@ -76,7 +76,7 @@ void initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat tex
     glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
     glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
     // start load_image
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, amuletImage);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, amuletImage);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     // end load_image
@@ -160,7 +160,9 @@ void renderer_init() {
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     // Dark blue background
-    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+    glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     shader = create_program("./shaders/vert.shader", "./shaders/frag.shader");
     amuletImage = load_image(AMULET, &w, &h);
 
