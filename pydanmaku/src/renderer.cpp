@@ -163,7 +163,7 @@ void renderer_init() {
     glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    shader = create_program("./shaders/vert.shader", "./shaders/frag.shader");
+    shader = create_program("shaders/vert.shader", "shaders/frag.shader");
     amuletImage = load_image(AMULET, &w, &h);
 
     render_inited = true;

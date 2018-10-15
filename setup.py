@@ -1,11 +1,12 @@
 from setuptools import setup
+from distutils import util
 from distutils.core import Extension
 import re
 
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-version = '0.0.1b' 
+version = '0.0.1b'
 
 if not version:
     raise RuntimeError('version is not set')
@@ -13,11 +14,15 @@ if not version:
 with open('README.md') as f:
     readme = f.read()
 
+lib_deps=['GLEW', 'glfw', 'freeimage']
+# on macos GL and GLU are part of framework OpenGL and are no libraries
+if not 'macosx' in util.get_platform():
+    lib_deps.append(['GL', 'GLU'])
+
 pydanmaku = Extension('pydanmaku',
                 include_dirs=['-I/usr/include/python3.7m'],
                 library_dirs=[],
-                libraries=['GL', 'GLU', 'GLEW', 'glfw', 'freeimage'],
-                data_files=['images/amulet.png', 'shaders/frag.shader', 'shaders/vert.shader'],
+                libraries=lib_deps,
                 sources=[
                     'pydanmaku/src/danmaku.cpp',
                     'pydanmaku/src/bullet.cpp',
@@ -27,6 +32,7 @@ pydanmaku = Extension('pydanmaku',
                     'pydanmaku/src/common/trig.cpp'
                 ],
             )
+
 
 setup(name='pydanmaku',
       author='hanss314',
@@ -39,4 +45,8 @@ setup(name='pydanmaku',
       include_package_data=True,
       install_requires=requirements,
       ext_modules= [pydanmaku],
+      data_files=[
+          ('images', ['pydanmaku/images/amulet.png']),
+          ('shaders', ['pydanmaku/shaders/frag.shader', 'pydanmaku/shaders/vert.shader'])
+          ],
 )

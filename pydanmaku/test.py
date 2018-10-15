@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-import danmaku
+import pydanmaku as danmaku
 import random
 import time
 from math import pi, sin, atan2, cos, hypot
+
+#  import pkgutil
+#  a =pkgutil.get_data('pydanmaku', 'shaders/frag.shader')
+#  print(a)
 
 FPS = 60
 wait = 1/FPS
