@@ -3,6 +3,8 @@
 #include <iostream>
 
 #include <list>
+#include <map>
+#include <tuple>
 #include <stdbool.h>
 #include "../include/bullet.h"
 
@@ -24,16 +26,15 @@ using namespace glm;
 #define HEIGHT 480
 #define XU 2.0/WIDTH
 #define YU 2.0/HEIGHT
-#define AMULET "images/rice.png"
+#define DEFAULT_TEXTURE "images/rice.png"
 
 GLFWwindow* window;
 bool render_inited = false;
 
 GLuint shader;
-BYTE* amuletImage;
-int w=0, h=0;
+std::map<std::string, std::tuple<BYTE*, int, int>> textureCache;
 
-GLuint vao, vbo, eab;
+GLuint vbo, eab;
 
 int last_size=0;
 
@@ -41,10 +42,11 @@ GLfloat *vertices_position;
 GLuint *indices;
 GLfloat *texture_coord;
 
-void initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat texture_coord[], int count) {
+GLuint initialize_quads(
+  GLfloat vertices_position[], GLuint indices[], GLfloat texture_coord[],
+  int count, BYTE* bulletImage, int w, int h) {
     // Use a Vertex Array Object
-
-
+    GLuint vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     // Create a Vector Buffer Object that will store the vertices on video memory
@@ -76,7 +78,8 @@ void initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat tex
     glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
     glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
     // start load_image
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, amuletImage);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, bulletImage);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     // end load_image
@@ -93,6 +96,7 @@ void initialize_quads(GLfloat vertices_position[], GLuint indices[], GLfloat tex
     GLint texture_coord_attribute = glGetAttribLocation(shader, "texture_coord");
     glVertexAttribPointer(texture_coord_attribute, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(8*count*sizeof(GLfloat)));
     glEnableVertexAttribArray(texture_coord_attribute);
+    return vao;
     
 }
 
@@ -164,13 +168,18 @@ void renderer_init() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     shader = create_program("./shaders/vert.shader", "./shaders/frag.shader");
-    amuletImage = load_image(AMULET, &w, &h);
+    int w = 0, h = 0;
+    BYTE* defaultImage = load_image(DEFAULT_TEXTURE, &w, &h);
+    std::tuple<BYTE*, int, int> defaultData = std::make_tuple(defaultImage, w, h);
+    textureCache[DEFAULT_TEXTURE] = defaultData;
+    textureCache[""] = defaultData;
 
     render_inited = true;
 
 }
 
-void render_bullets(std::list<Bullet> *bullets){
+void render_bullets(std::list<Bullet> *bullets, std::string texture_name){
+    //std::cout << texture_name << std::endl;
     if(!render_inited) return;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     int count = bullets->size();
@@ -184,18 +193,33 @@ void render_bullets(std::list<Bullet> *bullets){
         last_size = count;
     }
     int i = 0;
+    BYTE* bulletImage;
+    int w = 0, h = 0;
+    if (textureCache.find(texture_name) == textureCache.end()) {
+        bulletImage = load_image(texture_name.c_str(), &w, &h);
+        std::tuple<BYTE*, int, int> bulletData = std::make_tuple(bulletImage, w, h);
+        textureCache[texture_name] = bulletData;
+    } else {
+        std::tuple<BYTE*, int, int> bulletData = textureCache[texture_name];
+        bulletImage = std::get<0>(bulletData);
+        w = std::get<1>(bulletData);
+        h = std::get<2>(bulletData);
+    }
     for (std::list<Bullet>::iterator b = bullets->begin(); b != bullets->end(); b++){
         add_quad(vertices_position, indices, texture_coord, i, b->x, b->y, h, w, b->angle);
         i++;
     }
-    initialize_quads(vertices_position, indices, texture_coord, count);
+    GLuint vao = initialize_quads(vertices_position, indices, texture_coord, count, bulletImage, w, h);
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6*count, GL_UNSIGNED_INT, 0);
-    glfwSwapBuffers(window);
-
+    glBindVertexArray(0);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &eab);
     glDeleteVertexArrays(1, &vao);
+}
+
+void renderer_draw(){
+    glfwSwapBuffers(window);
 }
 
 void renderer_close() {

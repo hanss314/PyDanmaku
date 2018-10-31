@@ -7,8 +7,8 @@
 #define DANMAKU_RENDERER_H
 
 
-
 void renderer_init();
-void render_bullets(std::list<Bullet> *bullets);
+void render_bullets(std::list<Bullet> *bullets, std::string);
 void renderer_close();
+void renderer_draw();
 #endif //DANMAKU_RENDERER_H
