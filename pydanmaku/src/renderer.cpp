@@ -216,7 +216,6 @@ void render_bullets(Group *group){
     glDrawElements(GL_TRIANGLES, 6*count, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
-
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &eab);
     glDeleteVertexArrays(1, &vao);

@@ -25,8 +25,8 @@ bool Bullet::run(double timestep, Bullet ref){
     y += sinf(angle) * speed * timestep;
 
     //enter new reference frame
-    nx = x*ref.c + y*ref.s;
-    ny = y*ref.c - x*ref.s;
+    nx = x*ref.c - y*ref.s;
+    ny = y*ref.c + x*ref.s;
     x = nx; y = ny;
     x += ref.x; y += ref.y; angle += ref.angle;
 

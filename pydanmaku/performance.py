@@ -1,39 +1,23 @@
 #!/usr/bin/env python3
-import danmaku
-import random
-import time
-from math import pi, sin
+import pydanmaku as pd
+from math import pi
 
-"""
-FPS = 60
-wait = 1/FPS
-previous = time.time()
+groups = [pd.DanmakuGroup("images/amulet.png") for _ in range(10)]
 
-def framerate():
-    global previous, wait, FPS
-    now = time.time()
-    delta = now - previous
-    to_wait = wait - delta
-    previous = now + to_wait
-    if to_wait < 0: return
-    time.sleep(to_wait)
-"""
-
-x = danmaku.DanmakuGroup()
-for i in range(90000):
-    x.add_bullet(320, 400, True, 1, 1, i, 1, 0, 0.0)
+for group in groups:
+    for i in range(1000):
+        group.add_bullet(0, 0, False, angle=i, speed=1)
 
 try:
-    danmaku.init()
-    start = time.time()
-    i = 0
-    for i in range(600):
-        x.run()
-        x.render()
-        #framerate()
-    
-    end = time.time()
-    print(end-start)
+    pd.init()
+    for _ in range(600):
+        for group in groups:
+            group.run()
+            group.render()
+
+        pd.render()
+
+
 finally:
-    danmaku.close()
+    pd.close()
 
