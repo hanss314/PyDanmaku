@@ -12,11 +12,9 @@
 static PyObject* DanmakuGroup_init(PyObject *self, PyObject *args) {
     char* tex;
     if (!PyArg_ParseTuple(args, "Os", &self, &tex)) return NULL;
-    std::string *texture = new std::string(tex);
-    std::list<Bullet> *bullet_list = new std::list<Bullet>();
-    Group *group = new Group(*bullet_list, *texture);
-    delete texture;
-    delete bullet_list;
+    std::string texture(tex);
+    std::list<Bullet> bullet_list;
+    Group *group = new Group(bullet_list, texture);
     PyObject* capsule = PyCapsule_New(group, "_c_obj", NULL);
     PyObject_SetAttrString(self, "_c_obj", capsule);
     Py_RETURN_NONE;

@@ -8,6 +8,7 @@ build
 dist
 *.egg-info
 *.so
+*.o
 
 # testing files 
 resources
