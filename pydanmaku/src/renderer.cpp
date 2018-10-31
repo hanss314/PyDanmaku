@@ -45,7 +45,7 @@ GLuint shader;
 std::map<std::string, std::tuple<BYTE*, int, int>> textureCache;
 
 
-void initialize_quads(Group *group, int count, BYTE* bulletImage, int w, int h) {
+void initialize_quads(int count, BYTE* bulletImage, int w, int h) {
     // Use a Vertex Array Object
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -211,7 +211,7 @@ void render_bullets(Group *group){
         );
         i++;
     }
-    initialize_quads(group, count, bulletImage, w, h);
+    initialize_quads(count, bulletImage, w, h);
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6*count, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);

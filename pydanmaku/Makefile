@@ -27,10 +27,6 @@ all: $(OBJ)
 %.so: $(SOURCES)
 	$(CC) $(CC_FLAGS) $(SOURCES) -o $@
 
-
-
-
-
 # To remove generated files
 clean:
 	rm -f *.so
