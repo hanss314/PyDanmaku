@@ -12,10 +12,13 @@ Group::Group(std::list<Bullet> bullet_list, std::string texture){
     this->texture = texture;
     this->x = this->lx = 320;
     this->y = this->ly = 240;
+    /*
     this->angle = this->la = 1;
     this->angular_momentum = 0.01;
+     */
     this->c = this->lc = 1;
     this->s = this->ls = 0;
+
 }
 
 void Group::setSpeed(double speed) {
