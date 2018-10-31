@@ -4,17 +4,52 @@
 #include <iostream>
 #include "../include/bullet.h"
 
-bool Bullet::run(double timestep){
-    last_x = x;
-    last_y = y;
+bool Bullet::run(double timestep, Bullet ref){
+    lx = x; ly = y; la = angle; lc = c; ls = s;
+
+    //leave old reference frame
+    double nx, ny;
+    if (_ref_applied){
+        x -= ref.lx; y -= ref.ly; angle -= ref.la;
+        nx = x*ref.lc + y*ref.ls;
+        ny = y*ref.lc - x*ref.ls;
+        x = nx; y = ny;
+    } else {
+        _ref_applied = true;
+    }
+
+    //apply movement
     speed += acceleration * timestep;
     angle += angular_momentum * timestep;
+    x += cosf(angle) * speed * timestep;
+    y += sinf(angle) * speed * timestep;
+
+    //enter new reference frame
+    nx = x*ref.c + y*ref.s;
+    ny = y*ref.c - x*ref.s;
+    x = nx; y = ny;
+    x += ref.x; y += ref.y; angle += ref.angle;
+
+    // set angle stuff
     angle = fmod(angle, (double) M_PI * 2);
     this->s = sinf(angle);
     this->c = cosf(angle);
-    x += this->c * speed * timestep;
-    y += this->s * speed * timestep;
-    //return false;
+
+    return x < -10 || x > 650 || y < -10 || y > 490;
+}
+
+bool Bullet::run(double timestep){
+    lx = x; ly = y; la = angle; lc = c; ls = s;
+
+    angle = fmod(angle, (double) M_PI * 2);
+    this->s = sinf(angle);
+    this->c = cosf(angle);
+
+    speed += acceleration * timestep;
+    angle += angular_momentum * timestep;
+    x += c * speed * timestep;
+    y += s * speed * timestep;
+
     return x < -10 || x > 650 || y < -10 || y > 490;
 }
 
@@ -65,14 +100,15 @@ bool Bullet::collides(double x, double y, double radius){
 
 Bullet::Bullet(){
     Bullet(0.0, 0.0, true, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    this->c = this->lc = 1.0;
 }
 
 Bullet::Bullet(
     double x, double y, bool is_rect, double width, double height,
     double speed, double angle, double accel, double ang_m
 ){
-    this->x = x;
-    this->y = y;
+    this->x = lx = x;
+    this->y = ly = y;
     this->width = width;
     this->height = height;
     if (is_rect) {
@@ -84,9 +120,9 @@ Bullet::Bullet(
     }
     this->is_rect = is_rect;
     this->speed = speed;
-    this->angle = fmod(angle, 2*M_PI);
+    this->angle = la = fmod(angle, 2*M_PI);
     this->acceleration = accel;
     this->angular_momentum = ang_m;
+    this->s = this->ls = sinf(angle);
+    this->c = this->lc = cosf(angle);
 }
-
-

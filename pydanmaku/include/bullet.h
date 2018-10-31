@@ -4,8 +4,6 @@
 
 class Bullet {
 public:
-    double last_x;
-    double last_y;
     double x;
     double y;
     double angle;
@@ -13,17 +11,25 @@ public:
     double acceleration;
     double angular_momentum;
     bool is_rect;
+    bool _ref_applied = false;
     double height;
     double width;
     double radius;
-    double c, s; // cos and sin
+    double c, s; // cos and
+    double lx, ly, la, lc, ls; //previous state
 
     bool broad_search(double x, double y, double radius);
     bool collides(double x, double y, double radius);
 
     Bullet();
-    Bullet(double x, double y, bool is_rect, double width, double height, double speed, double angle, double accel, double ang_m);
-    bool run(double timestep);
+    Bullet(
+        double x, double y, bool is_rect,
+        double width, double height,
+        double speed, double angle,
+        double accel, double ang_m
+    );
+    bool run(double);
+    bool run(double, Bullet);
 
 };
 

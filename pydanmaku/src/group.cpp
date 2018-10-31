@@ -10,4 +10,10 @@
 Group::Group(std::list<Bullet> bullet_list, std::string texture){
     this->bullet_list = bullet_list;
     this->texture = texture;
+    this->x = this->lx = -100;
+    this->speed = 1;
+}
+
+void Group::setSpeed(double speed) {
+    this->speed = speed;
 }

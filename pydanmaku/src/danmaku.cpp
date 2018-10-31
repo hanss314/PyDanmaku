@@ -41,10 +41,11 @@ static PyObject* DanmakuGroup_run(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
     PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
     Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
+    group->run(1.0f);
     std::list<Bullet> *bullets = &(group->bullet_list);
     std::list<Bullet>::iterator b = bullets->begin();
     while (b != bullets->end()){
-        if((*b).run(1.0f)){
+        if((*b).run(1.0f, *group)){
             bullets->erase(b++);
         } else {
             b++;
@@ -81,7 +82,11 @@ static PyObject* DanmakuGroup_add(PyObject *self, PyObject *args){
     PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
     Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
     std::list<Bullet> *bullets = &(group->bullet_list);
-    Bullet b(x, y, (bool)is_rect, width, height, speed, angle, acceleration, angular_momentum);
+    Bullet b(
+        x, y, (bool)is_rect,
+        width, height, speed, angle,
+        acceleration, angular_momentum
+    );
     bullets->emplace_front(b);
     Py_RETURN_NONE;
 }
