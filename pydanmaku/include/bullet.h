@@ -21,6 +21,7 @@ public:
     bool broad_search(double x, double y, double radius);
     bool collides(double x, double y, double radius);
 
+    Bullet();
     Bullet(double x, double y, bool is_rect, double width, double height, double speed, double angle, double accel, double ang_m);
     bool run(double timestep);
 

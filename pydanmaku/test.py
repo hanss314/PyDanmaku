@@ -47,7 +47,7 @@ try:
     pd.init()
     start = time.time()
     i = 0
-    while True:
+    for _ in range(600):
         i+=1
         if i % 2 == 1:
             for j in range(10):

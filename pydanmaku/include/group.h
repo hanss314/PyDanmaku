@@ -6,17 +6,15 @@
 #include <string>
 
 #include <GL/glew.h>
+#include "bullet.h"
 
 #ifndef DANMAKU_GROUP_H
 #define DANMAKU_GROUP_H
 
-class Group {
+class Group : public Bullet{
 public:
     std::list<Bullet> bullet_list;
     std::string texture;
-
-
-
     Group(std::list<Bullet>, std::string);
 };
 

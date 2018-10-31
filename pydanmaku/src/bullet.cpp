@@ -63,7 +63,11 @@ bool Bullet::collides(double x, double y, double radius){
 
 }
 
-Bullet:: Bullet(
+Bullet::Bullet(){
+    Bullet(0.0, 0.0, true, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+}
+
+Bullet::Bullet(
     double x, double y, bool is_rect, double width, double height,
     double speed, double angle, double accel, double ang_m
 ){
