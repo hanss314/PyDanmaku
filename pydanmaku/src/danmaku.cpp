@@ -6,36 +6,34 @@
 #include <iostream>
 #include "../include/bullet.h"
 #include "../include/renderer.h"
+#include "../include/group.h"
 
-void DesBList(PyObject *capsule){
-    delete PyCapsule_GetPointer(capsule, "_bullet_list");
-}
-void DesTex(PyObject *capsule){
-    delete PyCapsule_GetPointer(capsule, "_texture");
-}
 
 static PyObject* DanmakuGroup_init(PyObject *self, PyObject *args) {
     char* tex;
     if (!PyArg_ParseTuple(args, "Os", &self, &tex)) return NULL;
     std::string *texture = new std::string(tex);
     std::list<Bullet> *bullet_list = new std::list<Bullet>();
-    PyObject* list_pointer = PyCapsule_New(bullet_list, "_bullet_list", &DesBList);
-    PyObject* texture_pointer = PyCapsule_New(texture, "_texture", &DesTex);
-    PyObject_SetAttrString(self, "_bullet_list", list_pointer);
-    PyObject_SetAttrString(self, "_texture", texture_pointer);
+    Group *group = new Group(*bullet_list, *texture);
+    delete texture;
+    delete bullet_list;
+    PyObject* capsule = PyCapsule_New(group, "_c_obj", NULL);
+    PyObject_SetAttrString(self, "_c_obj", capsule);
     Py_RETURN_NONE;
 }
 
 static PyObject* DanmakuGroup_del(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
-    PyObject* capsule = PyObject_GetAttrString(self, "_bullet_list");
-    std::list<Bullet> *bullets = (std::list<Bullet> *)PyCapsule_GetPointer(capsule, "_bullet_list");
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
+    std::list<Bullet> *bullets = &(group->bullet_list);
     bullets->clear();
+    delete group;
     Py_RETURN_NONE;
 }
 
-bool check_collisions(std::list<Bullet> *bullets){
-    for (std::list<Bullet>::iterator b = bullets->begin(); b != bullets->end(); b++){
+bool check_collisions(std::list<Bullet> bullets){
+    for (std::list<Bullet>::iterator b = bullets.begin(); b != bullets.end(); b++){
         if(b->collides(320.0, 240.0, 1.0)) return true;
     }
     return false;
@@ -43,8 +41,9 @@ bool check_collisions(std::list<Bullet> *bullets){
 
 static PyObject* DanmakuGroup_run(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
-    PyObject* capsule = PyObject_GetAttrString(self, "_bullet_list");
-    std::list<Bullet> *bullets = (std::list<Bullet> *)PyCapsule_GetPointer(capsule, "_bullet_list");
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
+    std::list<Bullet> *bullets = &(group->bullet_list);
     std::list<Bullet>::iterator b = bullets->begin();
     while (b != bullets->end()){
         if((*b).run(1.0f)){
@@ -59,11 +58,9 @@ static PyObject* DanmakuGroup_run(PyObject *self, PyObject *args) {
 
 static PyObject* DanmakuGroup_render(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
-    PyObject* capsule = PyObject_GetAttrString(self, "_bullet_list");
-    PyObject* texture = PyObject_GetAttrString(self, "_texture");
-    std::list<Bullet> *bullets = (std::list<Bullet> *)PyCapsule_GetPointer(capsule, "_bullet_list");
-    std::string *tex = (std::string*)PyCapsule_GetPointer(texture, "_texture");
-    render_bullets(bullets, *tex);
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
+    render_bullets(group);
     Py_RETURN_NONE;
 }
 
@@ -83,8 +80,9 @@ static PyObject* DanmakuGroup_add(PyObject *self, PyObject *args){
     if(is_rect && width == 0.0f){
         width = height;
     }
-    PyObject* capsule = PyObject_GetAttrString(self, "_bullet_list");
-    std::list<Bullet> *bullets = (std::list<Bullet> *)PyCapsule_GetPointer(capsule, "_bullet_list");
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
+    std::list<Bullet> *bullets = &(group->bullet_list);
     Bullet b(x, y, (bool)is_rect, width, height, speed, angle, acceleration, angular_momentum);
     bullets->emplace_front(b);
     Py_RETURN_NONE;

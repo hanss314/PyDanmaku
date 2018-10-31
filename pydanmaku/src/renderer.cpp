@@ -22,6 +22,8 @@ using namespace glm;
 
 #include "../include/renderer.h"
 
+#include "../include/group.h"
+
 #define WIDTH 640
 #define HEIGHT 480
 #define XU 2.0/WIDTH
@@ -31,22 +33,20 @@ using namespace glm;
 GLFWwindow* window;
 bool render_inited = false;
 
-GLuint shader;
-std::map<std::string, std::tuple<BYTE*, int, int>> textureCache;
-
-GLuint vbo, eab;
-
-int last_size=0;
+GLuint vao, vbo, eab;
 
 GLfloat *vertices_position;
 GLuint *indices;
 GLfloat *texture_coord;
 
-GLuint initialize_quads(
-  GLfloat vertices_position[], GLuint indices[], GLfloat texture_coord[],
-  int count, BYTE* bulletImage, int w, int h) {
+int last_size=0;
+
+GLuint shader;
+std::map<std::string, std::tuple<BYTE*, int, int>> textureCache;
+
+
+void initialize_quads(Group *group, int count, BYTE* bulletImage, int w, int h) {
     // Use a Vertex Array Object
-    GLuint vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     // Create a Vector Buffer Object that will store the vertices on video memory
@@ -96,8 +96,6 @@ GLuint initialize_quads(
     GLint texture_coord_attribute = glGetAttribLocation(shader, "texture_coord");
     glVertexAttribPointer(texture_coord_attribute, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(8*count*sizeof(GLfloat)));
     glEnableVertexAttribArray(texture_coord_attribute);
-    return vao;
-    
 }
 
 void apply_angle(double *x, double *y, double angle){
@@ -178,41 +176,47 @@ void renderer_init() {
 
 }
 
-void render_bullets(std::list<Bullet> *bullets, std::string texture_name){
-    //std::cout << texture_name << std::endl;
+void render_bullets(Group *group){
     if(!render_inited) return;
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    int count = bullets->size();
+    int count = group->bullet_list.size();
     if (count > last_size || last_size == 0) {
-        delete [] vertices_position;
-        delete [] indices;
-        delete [] texture_coord;
+        if (last_size != 0) {
+            delete[] vertices_position;
+            delete[] indices;
+            delete[] texture_coord;
+        }
         vertices_position = new GLfloat[8*count];
         indices = new GLuint[6*count];
         texture_coord = new GLfloat[8*count];
         last_size = count;
     }
+    std::list<Bullet> bullets = group->bullet_list;
     int i = 0;
     BYTE* bulletImage;
     int w = 0, h = 0;
-    if (textureCache.find(texture_name) == textureCache.end()) {
-        bulletImage = load_image(texture_name.c_str(), &w, &h);
+    if (textureCache.find(group->texture) == textureCache.end()) {
+        bulletImage = load_image(group->texture.c_str(), &w, &h);
         std::tuple<BYTE*, int, int> bulletData = std::make_tuple(bulletImage, w, h);
-        textureCache[texture_name] = bulletData;
+        textureCache[group->texture] = bulletData;
     } else {
-        std::tuple<BYTE*, int, int> bulletData = textureCache[texture_name];
+        std::tuple<BYTE*, int, int> bulletData = textureCache[group->texture];
         bulletImage = std::get<0>(bulletData);
         w = std::get<1>(bulletData);
         h = std::get<2>(bulletData);
     }
-    for (std::list<Bullet>::iterator b = bullets->begin(); b != bullets->end(); b++){
-        add_quad(vertices_position, indices, texture_coord, i, b->x, b->y, h, w, b->angle);
+    for (std::list<Bullet>::iterator b = bullets.begin(); b != bullets.end(); b++){
+        add_quad(
+            vertices_position, indices, texture_coord,
+            i, b->x, b->y, h, w, b->angle
+        );
         i++;
     }
-    GLuint vao = initialize_quads(vertices_position, indices, texture_coord, count, bulletImage, w, h);
+    initialize_quads(group, count, bulletImage, w, h);
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6*count, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+
+
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &eab);
     glDeleteVertexArrays(1, &vao);
@@ -220,12 +224,10 @@ void render_bullets(std::list<Bullet> *bullets, std::string texture_name){
 
 void renderer_draw(){
     glfwSwapBuffers(window);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void renderer_close() {
-    delete [] vertices_position;
-    delete [] indices;
-    delete [] texture_coord;
     glfwTerminate();
     render_inited = false;
 }
