@@ -161,7 +161,6 @@ void renderer_init() {
 
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    // Dark blue background
     glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -227,6 +226,11 @@ void renderer_draw(){
 }
 
 void renderer_close() {
+    if (last_size != 0) {
+        delete[] vertices_position;
+        delete[] indices;
+        delete[] texture_coord;
+    }
     glfwTerminate();
     render_inited = false;
 }
