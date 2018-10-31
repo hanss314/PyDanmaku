@@ -22,7 +22,6 @@ BYTE* load_image(const char *fname, int* width, int* height) {
     if(bitmap) {
         unsigned int w = FreeImage_GetWidth(bitmap);
         unsigned int h = FreeImage_GetHeight(bitmap);
-        printf("Loading %s %d %d\n", fname, w, h);
         *width = w; *height = h;
         data = (BYTE*)FreeImage_GetBits(bitmap);
     }

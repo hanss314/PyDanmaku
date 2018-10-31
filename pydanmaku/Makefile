@@ -22,13 +22,15 @@ obj/%.o: src/%.cpp $(DEPS)
 all: $(OBJ)
 	$(CC) -o _pydanmaku.so $^ -shared $(CC_FLAGS)
 
+test: $(OBJECTS) test.py pydanmaku.py
+	LD_PRELOAD=/lib/libasan.so.5 python3 test.py
 
 # Object files
-%.so: $(SOURCES)
-	$(CC) $(CC_FLAGS) $(SOURCES) -o $@
+%.so: $(OBJ)
+	$(CC) -o _pydanmaku.so $^ -shared $(CC_FLAGS)
 
 # To remove generated files
 clean:
-	rm -f *.so
+	rm -f *.so obj/**/*.o obj/*.o
 
 .PHONY: all run clean

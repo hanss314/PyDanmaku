@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import danmaku
+import pydanmaku as pd
 import random
 import time
-from math import pi, sin, atan2, cos, hypot
+import math
+from math import pi, sin, cos
 
 FPS = 60
 wait = 1/FPS
@@ -18,35 +19,51 @@ def framerate():
         print('bad'); return
     time.sleep(to_wait)
 
-manager = danmaku.DanmakuGroup()
+x = pd.DanmakuGroup("images/amulet.png")
+y = pd.DanmakuGroup("images/rice.png")
 i = 0
+
+violin_freqs = [
+    0.995, 0.940, 0.425, 0.480, 0.0, 0.365, 0.040, 0.085, 0.0, 0.09
+]
+
+def violin(x):
+    return sum (
+        s*sin((n+1)*x) if n%2==0 else s*cos((n+1)*x)
+        for n, s in enumerate(violin_freqs)
+    )
+
+"""
+import matplotlib.pyplot as plt
+ins = [2*pi*x/1000 for x in range(1001)]
+outs = list(map(violin, ins))
+plt.plot(ins, outs)
+plt.show()
+
+import sys
+sys.exit(0)
+"""
 try:
-    danmaku.init()
+    pd.init()
     start = time.time()
     i = 0
-    x, y = 320, 400
-    nx, ny = x, y
-    print("hi")
     while True:
         i+=1
-        if i%2 == 0: 
-            for j in range(8):
-                if i > 100:
-                    manager.add_bullet(x, y, True, 1, 1, i/30+j*pi/4, 4, 0.0)
-                manager.add_bullet(x, y, True, 1, 1, -i/21+j*pi/4, 2.1, 0.0)
-
-        if i%150 == 0:
-            nx = random.randint(max(100, x-50), min(540, x+50))
-            ny = random.randint(max(350, y-50), min(450, y+50))
-
-        a = atan2(ny-y, nx-x)
-        dist = hypot(ny-y, nx-x)
-        x += cos(a)*min(dist, 1)
-        y += sin(a)*min(dist, 1)
-        manager.run()
-        manager.render()
+        if i % 2 == 1:
+            for j in range(10):
+                x.add_bullet(320+100*violin(i/100), 240, False, 10, 15, 
+                        -pi/2, 2*pi*violin(i/100) + j*pi/5,
+                        5, 0, 0)
+                y.add_bullet(320-100*violin(i/100), 240, False, 10, 15,
+                              -pi/2, 2*pi*violin(i/100) + j*pi/5,
+                              5, 0, 0)
+        x.run()
+        x.render()
+        y.run()
+        y.render()
+        pd.render()
         #framerate()
 
 finally:
-    danmaku.close()
+    pd.close()
 
