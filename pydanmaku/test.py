@@ -5,6 +5,10 @@ import time
 import math
 from math import pi, sin, cos
 
+#  import pkgutil
+#  a =pkgutil.get_data('pydanmaku', 'shaders/frag.shader')
+#  print(a)
+
 FPS = 60
 wait = 1/FPS
 previous = time.time()
