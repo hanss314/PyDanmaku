@@ -5,10 +5,6 @@ import time
 import math
 from math import pi, sin, cos
 
-#  import pkgutil
-#  a =pkgutil.get_data('pydanmaku', 'shaders/frag.shader')
-#  print(a)
-
 FPS = 60
 wait = 1/FPS
 previous = time.time()
@@ -24,7 +20,7 @@ def framerate():
     time.sleep(to_wait)
 
 x = pd.DanmakuGroup("images/amulet.png")
-y = pd.DanmakuGroup("images/rice.png")
+#y = pd.DanmakuGroup("images/rice.png")
 i = 0
 
 violin_freqs = [
@@ -51,22 +47,18 @@ try:
     pd.init()
     start = time.time()
     i = 0
-    for _ in range(60000):
+    for _ in range(600):
         i+=1
         if i % 2 == 1:
             for j in range(10):
-                x.add_bullet(
-                    100*violin(i/100), 0, True, 10, 15,
-                    angle=2*pi*violin(i/100) + j*pi/5, speed=5
-                )
-                y.add_bullet(
-                    -100*violin(i/100), 0, False, 10, 15,
-                    angle=2*pi*violin(i/100) + j*pi/5, speed=5
-                )
+                x.add_bullet(0, 0, False, 10, 15, angle=j*pi/5, speed=2)
+                #y.add_bullet(320-100*violin(i/100), 240, False, 10, 15,
+                #              -pi/2, 2*pi*violin(i/100) + j*pi/5,
+                #              5, 0, 0)
         x.run()
         x.render()
-        y.run()
-        y.render()
+        #y.run()
+        #y.render()
         pd.render()
         #framerate()
 
