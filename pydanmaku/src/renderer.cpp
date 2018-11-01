@@ -179,11 +179,9 @@ void render_bullets(Group *group){
     if(!render_inited) return;
     int count = group->bullet_list.size();
     if (count > last_size || last_size == 0) {
-        if (last_size != 0) {
-            delete[] vertices_position;
-            delete[] indices;
-            delete[] texture_coord;
-        }
+        delete[] vertices_position;
+        delete[] indices;
+        delete[] texture_coord;
         vertices_position = new GLfloat[8*count];
         indices = new GLuint[6*count];
         texture_coord = new GLfloat[8*count];
@@ -226,11 +224,10 @@ void renderer_draw(){
 }
 
 void renderer_close() {
-    if (last_size != 0) {
-        delete[] vertices_position;
-        delete[] indices;
-        delete[] texture_coord;
-    }
+    delete[] vertices_position;
+    delete[] indices;
+    delete[] texture_coord;
+
     glfwTerminate();
     render_inited = false;
 }

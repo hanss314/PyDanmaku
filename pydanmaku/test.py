@@ -51,7 +51,7 @@ try:
         i+=1
         if i % 2 == 1:
             for j in range(10):
-                x.add_bullet(320+100*violin(i/100), 240, False, 10, 15,
+                x.add_bullet(100*violin(i/100), 0, False, 10, 15,
                              -pi/2, 2*pi*violin(i/100) + j*pi/5,
                              5, 0, 0)
                 y.add_bullet(320-100*violin(i/100), 240, False, 10, 15,
