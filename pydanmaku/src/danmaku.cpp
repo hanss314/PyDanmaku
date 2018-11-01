@@ -45,14 +45,14 @@ static PyObject* DanmakuGroup_run(PyObject *self, PyObject *args) {
     std::list<Bullet> *bullets = &(group->bullet_list);
     std::list<Bullet>::iterator b = bullets->begin();
     while (b != bullets->end()){
-        if((*b).run(1.0f)){
+        if((*b).run(1.0f, *group)){
             bullets->erase(b++);
         } else {
             b++;
         }
     }
     // if (check_collisions(bullets)) std::cout << "Collision!" << std::endl;
-    Py_RETURN_NONE
+    Py_RETURN_NONE;
 }
 
 static PyObject* DanmakuGroup_render(PyObject *self, PyObject *args) {

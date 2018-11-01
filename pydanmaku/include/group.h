@@ -16,8 +16,6 @@ public:
     std::list<Bullet> bullet_list;
     std::string texture;
     Group(std::list<Bullet>, std::string);
-
-    void setSpeed(double);
 };
 
 
