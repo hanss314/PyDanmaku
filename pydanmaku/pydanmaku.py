@@ -28,10 +28,13 @@ class DanmakuGroup(pd._DanmakuGroup):
         self.texture = texture
         self._set_texture(texture)
 
-    def run(self):
-        super()._run()
+    def run(self, parent=None):
+        if parent is None:
+            super()._run()
+        else:
+            super()._run(parent)
         for group in self.subgroups:
-            group.run()
+            group.run(self)
 
     def add_bullet(
             self, x, y, is_rect=True,

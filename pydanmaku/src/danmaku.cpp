@@ -38,10 +38,17 @@ bool check_collisions(std::list<Bullet> bullets){
 }
 
 static PyObject* DanmakuGroup_run(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
+    PyObject* parent = NULL;
+    if (!PyArg_ParseTuple(args, "O|O", &self, &parent)) return NULL;
     PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
     Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
-    group->run(1.0f);
+    if (parent == NULL) {
+        group->run(1.0f);
+    } else {
+        PyObject* parcapsule = PyObject_GetAttrString(parent, "_c_obj");
+        Group *pargroup = (Group*)PyCapsule_GetPointer(parcapsule, "_c_obj");
+        group->run(1.0f, *pargroup);
+    }
     std::list<Bullet> *bullets = &(group->bullet_list);
     std::list<Bullet>::iterator b = bullets->begin();
     while (b != bullets->end()){
