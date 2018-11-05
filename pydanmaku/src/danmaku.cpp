@@ -70,6 +70,52 @@ static PyObject* DanmakuGroup_render(PyObject *self, PyObject *args) {
     Py_RETURN_NONE;
 }
 
+static PyObject* DanmakuGroup_set_position(PyObject *self, PyObject *args) {
+    double x=0, y=0;
+    if (!PyArg_ParseTuple(args, "Odd", &self, &x, &y)) return NULL;
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
+    group->x = x; group->y = y;
+    Py_RETURN_NONE;
+}
+
+static PyObject* DanmakuGroup_set_angle(PyObject *self, PyObject *args) {
+    double ang=0;
+    if (!PyArg_ParseTuple(args, "Od", &self, &ang)) return NULL;
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
+    group->angle = ang;
+    Py_RETURN_NONE;
+}
+
+static PyObject* DanmakuGroup_set_speed(PyObject *self, PyObject *args) {
+    double speed=0;
+    if (!PyArg_ParseTuple(args, "Od", &speed)) return NULL;
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
+    group->speed = speed;
+    Py_RETURN_NONE;
+}
+
+static PyObject* DanmakuGroup_set_acceleration(PyObject *self, PyObject *args) {
+    double acc=0;
+    if (!PyArg_ParseTuple(args, "Od", &self, &acc)) return NULL;
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
+    group->acceleration = acc;
+    Py_RETURN_NONE;
+}
+
+static PyObject* DanmakuGroup_set_angular_momentum(PyObject *self, PyObject *args) {
+    double angm=0;
+    if (!PyArg_ParseTuple(args, "Od", &self, &angm)) return NULL;
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
+    group->angular_momentum = angm;
+    Py_RETURN_NONE;
+}
+
+
 static PyObject* DanmakuGroup_add(PyObject *self, PyObject *args){
     double x=0.0f;
     double y=0.0f;
@@ -120,7 +166,13 @@ static PyMethodDef DanmakuGroupMethods[] =
     {"_run", DanmakuGroup_run, METH_VARARGS, ""},
     {"_render", DanmakuGroup_render, METH_VARARGS, ""},
     {"_add_bullet", DanmakuGroup_add, METH_VARARGS, ""},
-    {NULL, NULL, 0, NULL}  ,
+    {"set_position", DanmakuGroup_set_position, METH_VARARGS, ""},
+    {"set_speed", DanmakuGroup_set_speed, METH_VARARGS, ""},
+    {"set_angle", DanmakuGroup_set_angle, METH_VARARGS, ""},
+    {"set_accel", DanmakuGroup_set_acceleration, METH_VARARGS, ""},
+    {"set_angm", DanmakuGroup_set_angular_momentum, METH_VARARGS, ""},
+    {"set_position", DanmakuGroup_set_position, METH_VARARGS, ""},
+    {NULL, NULL, 0, NULL} ,
 };
 
 static PyMethodDef ModuleMethods[] = {
