@@ -33,7 +33,7 @@ using namespace glm;
 GLFWwindow* window;
 bool render_inited = false;
 
-GLuint vao, vbo, eab;
+GLuint vao, vbo, eab, texture;
 
 GLfloat *vertices_position;
 GLuint *indices;
@@ -68,7 +68,7 @@ void initialize_quads(int count, BYTE* bulletImage, int w, int h) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*count*sizeof(GLuint), indices, GL_STATIC_DRAW);
 
     // Create a texture
-    GLuint texture;
+    //GLuint texture;
     glGenTextures(1, &texture);
     // Specify that we work with a 2D texture
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -188,7 +188,6 @@ void render_bullets(Group *group){
         texture_coord = new GLfloat[8*count];
         last_size = count;
     }
-    std::list<Bullet> bullets = group->bullet_list;
     int i = 0;
     BYTE* bulletImage;
     int w = 0, h = 0;
@@ -202,7 +201,8 @@ void render_bullets(Group *group){
         w = std::get<1>(bulletData);
         h = std::get<2>(bulletData);
     }
-    for (std::list<Bullet>::iterator b = bullets.begin(); b != bullets.end(); b++){
+
+    for (std::list<Bullet>::iterator b = group->bullet_list.begin(); b != group->bullet_list.end(); b++){
         add_quad(
             vertices_position, indices, texture_coord,
             i, b->x, b->y, h, w, b->angle
@@ -217,6 +217,7 @@ void render_bullets(Group *group){
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &eab);
     glDeleteVertexArrays(1, &vao);
+    glDeleteTextures(1, &texture);
 }
 
 void renderer_draw(){
