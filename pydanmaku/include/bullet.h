@@ -17,6 +17,7 @@ public:
     double radius;
     double c, s; // cos and
     double lx, ly, la, lc, ls; //previous state
+    int life=0;
 
     bool broad_search(double x, double y, double radius);
     bool collides(double x, double y, double radius);

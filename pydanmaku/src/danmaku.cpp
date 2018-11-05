@@ -115,6 +115,54 @@ static PyObject* DanmakuGroup_set_angular_momentum(PyObject *self, PyObject *arg
     Py_RETURN_NONE;
 }
 
+static PyObject* fromBullet(PyObject *type, Bullet b){
+    PyObject *argList = Py_BuildValue("iddddddddd",
+        b.life, b.x, b.y, b.angle, b.lx, b.la, b.la,
+        b.speed, b.acceleration, b.angular_momentum
+    );
+    PyObject *obj = PyObject_CallObject(type, argList);
+    Py_DECREF(argList);
+    return obj;
+}
+
+void fromPyObj(PyObject *obj, Bullet *b){
+    PyObject* var = PyObject_GetAttrString(obj, "x");
+    b->x = PyFloat_AS_DOUBLE(var);
+    Py_DECREF(var); var = PyObject_GetAttrString(obj, "y");
+    b->y = PyFloat_AS_DOUBLE(var);
+    Py_DECREF(var); var = PyObject_GetAttrString(obj, "ang");
+    b->angle = PyFloat_AS_DOUBLE(var);
+    Py_DECREF(var); var = PyObject_GetAttrString(obj, "speed");
+    b->speed = PyFloat_AS_DOUBLE(var);
+    Py_DECREF(var); var = PyObject_GetAttrString(obj, "acc");
+    b->acceleration = PyFloat_AS_DOUBLE(var);
+    Py_DECREF(var); var = PyObject_GetAttrString(obj, "angm");
+    b->angular_momentum = PyFloat_AS_DOUBLE(var);
+    Py_DECREF(var);
+}
+
+static PyObject* DanmakuGroup_run_modifier(PyObject *self, PyObject *args) {
+    PyObject *modifier;
+    PyObject *bullet_type;
+    if (!PyArg_ParseTuple(args, "OOO", &self, &bullet_type, &modifier)) return NULL;
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
+    std::list<Bullet> *bullets = &(group->bullet_list);
+    std::list<Bullet>::iterator b = bullets->begin();
+    while (b != bullets->end()){
+        PyObject *bullet = fromBullet(bullet_type, *b);
+        PyObject *result = PyObject_CallFunctionObjArgs(modifier, bullet, NULL);
+        if (result == NULL){
+            bullets->erase(b++);
+            continue;
+        }
+        fromPyObj(result, &(*b));
+        Py_DECREF(bullet); Py_DECREF(result);
+        b++;
+    }
+    Py_RETURN_NONE;
+}
+
 
 static PyObject* DanmakuGroup_add(PyObject *self, PyObject *args){
     double x=0.0f;
@@ -172,6 +220,7 @@ static PyMethodDef DanmakuGroupMethods[] =
     {"set_accel", DanmakuGroup_set_acceleration, METH_VARARGS, ""},
     {"set_angm", DanmakuGroup_set_angular_momentum, METH_VARARGS, ""},
     {"set_position", DanmakuGroup_set_position, METH_VARARGS, ""},
+    {"_run_modifier", DanmakuGroup_run_modifier, METH_VARARGS, ""},
     {NULL, NULL, 0, NULL} ,
 };
 

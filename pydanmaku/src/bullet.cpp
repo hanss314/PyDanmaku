@@ -34,7 +34,7 @@ bool Bullet::run(double timestep, Bullet ref){
     angle = fmod(angle, (double) M_PI * 2);
     this->s = sinf(angle);
     this->c = cosf(angle);
-
+    life++;
     return x < -10 || x > 650 || y < -10 || y > 490;
 }
 
@@ -50,7 +50,7 @@ bool Bullet::run(double timestep){
     y += s * speed * timestep;
 
     angle = fmod(angle, (double) M_PI * 2);
-
+    life++;
     return x < -10 || x > 650 || y < -10 || y > 490;
 }
 

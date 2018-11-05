@@ -37,6 +37,14 @@ def violin(x):
         for n, s in enumerate(violin_freqs)
     )
 
+@pd.modifier
+def wavy(step, b):
+    b = b._replace(ang=b.ang + 0.07*sin((step+b.life)/20), acc=b.acc+0.001)
+    return b
+
+x.add_modifier(wavy)
+
+
 """
 import matplotlib.pyplot as plt
 ins = [2*pi*x/1000 for x in range(1001)]
@@ -53,14 +61,16 @@ try:
     i = 0
     for _ in range(60000):
         i+=1
-        if i % 2 == 1:
+        if i % 4 == 1:
             for j in range(10):
                 x.add_bullet(
-                    100*violin(i/100), 0, True, 10, 15,
-                    angle=2*pi*violin(i/100) + j*pi/5, speed=5
+                    100+0*100*violin(i/100), 0, True, 10, 15,
+                    angle=i/30 + j*pi/5, speed=5
                 )
+        if i % 4 == 3:
+            for j in range(10):
                 y.add_bullet(
-                    -100*violin(i/100), 0, False, 10, 15,
+                    -100+0*-100*violin(i/100), 0, False, 10, 15,
                     angle=2*pi*violin(i/100) + j*pi/5, speed=5
                 )
         x.run()
