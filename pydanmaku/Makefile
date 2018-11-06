@@ -3,7 +3,7 @@ CC = g++
 CC_FLAGS = -std=c++11 -fPIC -I/usr/include/python3.7m \
 	-Wall -Wextra -Wno-unused-parameter -O2 -g \
 	-lGL -lGLU -lGLEW -lglfw -lfreeimage \
-	-lasan -fsanitize=address,undefined
+#	-lasan -fsanitize=address,undefined
 
 ODIR = obj
 
