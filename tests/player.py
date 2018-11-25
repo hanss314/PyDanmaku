@@ -23,17 +23,21 @@ class Moveable(pd.Player):
         if keys[KEY_RIGHT]: x += 3
         if keys[KEY_LEFT]: x -= 3
         self.set_pos(x, y)
-    
 
-x = Moveable(100, 100, 1, "images/amulet.png")
-try:
-    pd.init()
-    for _ in range(60000):
-        pd.render()
-        #framerate()
+    def collision(self):
+        print('Collision!')
 
-finally:
-    del x
-    pd.close()
+
+if __name__ == '__main__':
+    x = Moveable(100, 100, 1, "images/amulet.png")
+    try:
+        pd.init()
+        for _ in range(60000):
+            pd.render()
+            #framerate()
+
+    finally:
+        del x
+        pd.close()
 
 

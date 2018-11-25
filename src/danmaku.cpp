@@ -34,11 +34,17 @@ static PyObject* DanmakuGroup_del(PyObject *self, PyObject *args) {
     Py_RETURN_NONE;
 }
 
-bool check_collisions(std::list<Bullet> bullets){
+void check_collisions(std::list<Bullet> bullets){
     for (std::list<Bullet>::iterator b = bullets.begin(); b != bullets.end(); b++){
-        if(b->collides(320.0, 240.0, 1.0)) return true;
+        for(std::vector<PyObject*>::iterator it = players.begin(); it != players.end(); ++it) {
+            PyObject* capsule = PyObject_GetAttrString(*it, "_c_obj");
+            Player *p = (Player*)PyCapsule_GetPointer(capsule, "_c_obj");
+            if(b->collides(p->x, p->y, p->r)) {
+                PyObject *coll_func = PyObject_GetAttrString(*it, "collision");
+                PyObject_CallFunctionObjArgs(coll_func, NULL);
+            }
+        }
     }
-    return false;
 }
 
 static PyObject* DanmakuGroup_run(PyObject *self, PyObject *args) {
@@ -62,7 +68,7 @@ static PyObject* DanmakuGroup_run(PyObject *self, PyObject *args) {
             b++;
         }
     }
-    // if (check_collisions(bullets)) std::cout << "Collision!" << std::endl;
+    check_collisions(*bullets);
     Py_RETURN_NONE;
 }
 
@@ -252,6 +258,11 @@ static PyObject* Player_step(PyObject *self, PyObject *args) {
     Py_RETURN_NONE;
 }
 
+static PyObject* Player_collision(PyObject *self, PyObject *args) {
+    if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
+    Py_RETURN_NONE;
+}
+
 static PyObject* Player_set_position(PyObject *self, PyObject *args) {
     double x, y;
     if (!PyArg_ParseTuple(args, "Odd", &self, &x, &y)) return NULL;
@@ -302,6 +313,7 @@ static PyMethodDef PlayerMethods[] =
     {"__init__", Player_init, METH_VARARGS, ""},
     {"__del__", Player_del, METH_VARARGS, ""},
     {"step", Player_step, METH_VARARGS, ""},
+    {"collision", Player_collision, METH_VARARGS, ""},
     {"set_pos", Player_set_position, METH_VARARGS, ""},
     {"get_pos", Player_get_position, METH_VARARGS, ""},
     {NULL, NULL, 0, NULL} ,

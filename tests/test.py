@@ -4,6 +4,7 @@ import random
 import time
 import math
 from math import pi, sin, cos
+from player import Moveable
 
 #  import pkgutil
 #  a =pkgutil.get_data('pydanmaku', 'shaders/frag.shader')
@@ -23,9 +24,11 @@ def framerate():
         print('bad'); return
     time.sleep(to_wait)
 
-x = pd.DanmakuGroup("images/amulet.png")
+x = pd.DanmakuGroup("images/rice.png")
 y = pd.DanmakuGroup("images/rice.png")
 i = 0
+
+player = Moveable(100, 100, 2, "images/amulet.png")
 
 violin_freqs = [
     0.995, 0.940, 0.425, 0.480, 0.0, 0.365, 0.040, 0.085, 0.0, 0.09
