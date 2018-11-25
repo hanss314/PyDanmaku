@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+import os.path
+
 from typing import List, Callable
 from collections import namedtuple
 
@@ -9,6 +12,8 @@ from _pydanmaku import *
 Bullet = namedtuple('Bullet', ['life', 'x', 'y', 'ang', 'lx', 'ly', 'la', 'speed', 'acc', 'angm'])
 
 
+def init():
+    pd._init(os.path.dirname(__file__).encode('utf-8'))
 
 def modifier(f: Callable[[int, Bullet], Bullet]) -> \
         Callable[[int], Callable[[Bullet], Bullet]]:

@@ -2,6 +2,7 @@ from setuptools import setup
 from distutils import util
 from distutils.core import Extension
 
+
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
@@ -23,13 +24,13 @@ pydanmaku = Extension('_pydanmaku',
     library_dirs=[],
     libraries=lib_deps,
     sources=[
-        'pydanmaku/src/danmaku.cpp',
-        'pydanmaku/src/bullet.cpp',
-        'pydanmaku/src/renderer.cpp',
-        'pydanmaku/src/common/shader.cpp',
-        'pydanmaku/src/common/png.cpp',
-        'pydanmaku/src/common/trig.cpp',
-        'pydanmaku/src/group.cpp'
+        'src/danmaku.cpp',
+        'src/bullet.cpp',
+        'src/renderer.cpp',
+        'src/common/shader.cpp',
+        'src/common/png.cpp',
+        'src/common/trig.cpp',
+        'src/group.cpp'
     ],
 )
 
@@ -39,15 +40,14 @@ setup(
     author='hanss314',
     url='https://github.com/hanss314/PyDanmaku',
     version=version,
-    packages=['pydanmaku'],
+    packages=[''],
     license='MIT',
     description='A Danmaku engine written in python',
     long_description=readme,
     include_package_data=True,
     install_requires=requirements,
-    ext_modules= [pydanmaku],
+    ext_modules=[pydanmaku],
     data_files=[
-        ('.', ['pydanmaku/pydanmaku.py']),
-        ('shaders', ['pydanmaku/shaders/frag.shader', 'pydanmaku/shaders/vert.shader'])
+        ('shaders', ['shaders/frag.shader', 'shaders/vert.shader'])
     ],
 )

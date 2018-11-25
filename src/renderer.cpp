@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <iostream>
 
 #include <list>
@@ -136,11 +137,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     } else if (action == GLFW_RELEASE) {
         pressed[key] = 0;
     }
-    printf("%d\n", pressed[key]);
 }
 
 
-void renderer_init() {
+void renderer_init(const char* directory) {
     trig_init();
     glfwInit();
     glfwWindowHint(GLFW_SAMPLES, 4);
@@ -176,7 +176,14 @@ void renderer_init() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    shader = create_program("shaders/vert.shader", "shaders/frag.shader");
+    int len = strlen(directory);
+    char* vert = (char*)malloc(len+32); vert[0] = '\0';
+    char* frag = (char*)malloc(len+32); frag[0] = '\0';
+    strcpy(vert, directory); strcpy(frag, directory);
+    strcat(vert, "/shaders/vert.shader");
+    strcat(frag, "/shaders/frag.shader");
+    shader = create_program(vert, frag);
+    free(vert); free(frag);
     int w = 0, h = 0;
     BYTE* defaultImage = load_image(DEFAULT_TEXTURE, &w, &h);
     std::tuple<BYTE*, int, int> defaultData = std::make_tuple(defaultImage, w, h);

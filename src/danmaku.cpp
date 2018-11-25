@@ -193,7 +193,9 @@ static PyObject* DanmakuGroup_add(PyObject *self, PyObject *args){
 }
 
 static PyObject* Danmaku_init(PyObject *self, PyObject *args){
-    renderer_init();
+    const char* directory;
+    if (!PyArg_ParseTuple(args, "y", &directory)) return NULL;
+    renderer_init(directory);
     Py_RETURN_NONE;
 }
 
@@ -238,12 +240,13 @@ static PyMethodDef DanmakuGroupMethods[] =
 };
 
 static PyMethodDef ModuleMethods[] = {
-    {"init", Danmaku_init, METH_VARARGS, ""},
+    {"_init", Danmaku_init, METH_VARARGS, ""},
     {"close", Danmaku_close, METH_VARARGS, ""},
     {"render", Danmaku_render, METH_VARARGS, ""},
     {"get_keys", Danmaku_get_keys, METH_VARARGS, ""},
     {NULL, NULL, 0, NULL}
 };
+
 static struct PyModuleDef danmakumodule = {
     PyModuleDef_HEAD_INIT,
     "_danmaku",   /* name of module */

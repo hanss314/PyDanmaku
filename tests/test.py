@@ -39,7 +39,8 @@ def violin(x):
 
 @pd.modifier
 def wavy(step, b):
-    b = b._replace(ang=b.ang + 0.07*sin((step+b.life)/20), acc=b.acc+0.001)
+    if b.life < 30:
+        b = b._replace(ang=b.ang + 0.1*sin((step+b.life)/10), acc=b.acc+0.001)
     return b
 
 x.add_modifier(wavy)
@@ -59,25 +60,28 @@ try:
     pd.init()
     start = time.time()
     i = 0
+    pos = 100
     for _ in range(60000):
         i+=1
         if i % 4 == 1:
             for j in range(10):
                 x.add_bullet(
-                    100+0*100*violin(i/100), 0, True, 10, 15,
+                    pos+0*100*violin(i/100), 0, True, 10, 15,
                     angle=i/30 + j*pi/5, speed=5
                 )
         if i % 4 == 3:
             for j in range(10):
                 y.add_bullet(
-                    -100+0*-100*violin(i/100), 0, False, 10, 15,
+                    -pos+0*-100*violin(i/100), 0, False, 10, 15,
                     angle=2*pi*violin(i/100) + j*pi/5, speed=5
                 )
         x.run()
         x.render()
         y.run()
         y.render()
-        print(pd.get_keys())
+        keys = pd.get_keys()
+        if keys[263]: pos += 2
+        if keys[262]: pos -= 2
         pd.render()
         #framerate()
 

@@ -11,7 +11,7 @@
 #define DANMAKU_RENDERER_H
 
 
-void renderer_init();
+void renderer_init(const char* directory);
 void render_bullets(Group *group);
 void renderer_close();
 void renderer_draw();

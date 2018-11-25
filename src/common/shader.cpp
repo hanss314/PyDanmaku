@@ -15,26 +15,6 @@ using namespace std;
 
 #include <Python.h>
 
-bool read_python_package_resource(const char *resourcePath, std::vector<char> &buffer) {
-    PyObject* module = PyImport_ImportModule("pkgutil");
-    PyObject* func = PyObject_GetAttrString(module,"get_data");
-    if (func) {
-        PyObject* args = PyTuple_Pack(2, PyUnicode_FromString("pydanmaku"),
-                                         PyUnicode_FromString(resourcePath));
-        PyObject* result = PyObject_CallObject(func, args);
-        char *str = PyBytes_AsString(result);
-        if (str) {
-            size_t len = strlen(str);
-            buffer.insert(buffer.begin(), str, str + len + 1);
-            // std::cout << "shader " << resourcePath << " " <<  str << '\n' << buffer.size() << "\n";
-            return true;
-        }
-    }
-    // std::cerr << __FUNCTION__ << " failed\n";
-    return false;
-}
-
-
 bool read_shader_file(const char *fname, std::vector<char> &buffer) {
     // std::cout << __FUNCTION__ << " " << fname << '\n';
     std::ifstream in;
@@ -65,8 +45,7 @@ bool read_shader_file(const char *fname, std::vector<char> &buffer) {
 
 
 void read_shader_src(const char *fname, std::vector<char> &buffer) {
-    if ( read_shader_file(fname, buffer) ||
-         read_python_package_resource(fname, buffer)) {
+    if (read_shader_file(fname, buffer)) {
         // ok
     }
     else {
