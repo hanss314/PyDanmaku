@@ -6,7 +6,7 @@ from distutils.core import Extension
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-version = '0.0.1a2'
+version = '0.0.1'
 
 if not version:
     raise RuntimeError('version is not set')
