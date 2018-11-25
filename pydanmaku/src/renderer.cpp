@@ -44,6 +44,7 @@ int last_size=0;
 GLuint shader;
 std::map<std::string, std::tuple<BYTE*, int, int>> textureCache;
 
+int pressed[INPUT_COUNT];
 
 void initialize_quads(int count, BYTE* bulletImage, int w, int h) {
     // Use a Vertex Array Object
@@ -129,6 +130,16 @@ void add_quad(GLfloat vert[], GLuint ind[], GLfloat tex[], int i, double x, doub
     tex[8*i+2] = tex[8*i+4] = tex[8*i+5] = tex[8*i+7] = 1.0;
 }
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+    if (action == GLFW_PRESS){
+        pressed[key] = 1;
+    } else if (action == GLFW_RELEASE) {
+        pressed[key] = 0;
+    }
+    printf("%d\n", pressed[key]);
+}
+
+
 void renderer_init() {
     trig_init();
     glfwInit();
@@ -171,6 +182,9 @@ void renderer_init() {
     std::tuple<BYTE*, int, int> defaultData = std::make_tuple(defaultImage, w, h);
     textureCache[DEFAULT_TEXTURE] = defaultData;
     textureCache[""] = defaultData;
+
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, 1);
+    glfwSetKeyCallback(window, key_callback);
 
     render_inited = true;
 
@@ -223,6 +237,14 @@ void render_bullets(Group *group){
 void renderer_draw(){
     glfwSwapBuffers(window);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+int* get_keys(){
+    if (!render_inited){
+        return NULL;
+    }
+    glfwPollEvents();
+    return pressed;
 }
 
 void renderer_close() {

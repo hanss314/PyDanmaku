@@ -207,6 +207,19 @@ static PyObject* Danmaku_render(PyObject *self, PyObject *args){
     Py_RETURN_NONE;
 }
 
+static PyObject* Danmaku_get_keys(PyObject *self, PyObject *args){
+    int* keys = get_keys();
+    if(keys==NULL) {
+        return PyErr_Format(PyExc_RuntimeError, "Renderer has not been initialized.");
+    }
+    PyObject* py_list = PyList_New(INPUT_COUNT);
+    for (int i=0; i<INPUT_COUNT; i++){
+        PyList_SetItem(py_list, i, PyLong_FromLong((long)keys[i]));
+    }
+    return py_list;
+
+}
+
 static PyMethodDef DanmakuGroupMethods[] =
 {
     {"__init__", DanmakuGroup_init, METH_VARARGS, ""},
@@ -228,6 +241,7 @@ static PyMethodDef ModuleMethods[] = {
     {"init", Danmaku_init, METH_VARARGS, ""},
     {"close", Danmaku_close, METH_VARARGS, ""},
     {"render", Danmaku_render, METH_VARARGS, ""},
+    {"get_keys", Danmaku_get_keys, METH_VARARGS, ""},
     {NULL, NULL, 0, NULL}
 };
 static struct PyModuleDef danmakumodule = {

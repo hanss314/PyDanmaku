@@ -77,6 +77,7 @@ try:
         x.render()
         y.run()
         y.render()
+        print(pd.get_keys())
         pd.render()
         #framerate()
 
