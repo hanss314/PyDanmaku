@@ -2,12 +2,16 @@
 #include <stdbool.h>
 #include <math.h>
 #include <list>
+#include <algorithm>
 #include <string>
+#include <vector>
 #include <iostream>
 #include "../include/bullet.h"
 #include "../include/renderer.h"
 #include "../include/group.h"
+#include "../include/player.h"
 
+std::vector<PyObject*> players;
 
 static PyObject* DanmakuGroup_init(PyObject *self, PyObject *args) {
     char* tex;
@@ -194,7 +198,7 @@ static PyObject* DanmakuGroup_add(PyObject *self, PyObject *args){
 
 static PyObject* Danmaku_init(PyObject *self, PyObject *args){
     const char* directory;
-    if (!PyArg_ParseTuple(args, "y", &directory)) return NULL;
+    if (!PyArg_ParseTuple(args, "s", &directory)) return NULL;
     renderer_init(directory);
     Py_RETURN_NONE;
 }
@@ -205,6 +209,13 @@ static PyObject* Danmaku_close(PyObject *self, PyObject *args){
 }
 
 static PyObject* Danmaku_render(PyObject *self, PyObject *args){
+    for(std::vector<PyObject*>::iterator it = players.begin(); it != players.end(); ++it) {
+        PyObject* capsule = PyObject_GetAttrString(*it, "_c_obj");
+        Player *player = (Player*)PyCapsule_GetPointer(capsule, "_c_obj");
+        PyObject* step_func = PyObject_GetAttrString(*it, "step");
+        PyObject_CallFunctionObjArgs(step_func, NULL);
+        render_player(player);
+    }
     renderer_draw();
     Py_RETURN_NONE;
 }
@@ -219,7 +230,54 @@ static PyObject* Danmaku_get_keys(PyObject *self, PyObject *args){
         PyList_SetItem(py_list, i, PyLong_FromLong((long)keys[i]));
     }
     return py_list;
+}
 
+static PyObject* Player_init(PyObject *self, PyObject *args) {
+    char* tex;
+    double x=0., y=0., radius=0.;
+    if (!PyArg_ParseTuple(
+            args, "Oddds",
+            &self, &x, &y, &radius, &tex
+    )) {return NULL;}
+
+    Player* player = new Player(x, y, radius, tex);
+    PyObject* capsule = PyCapsule_New(player, "_c_obj", NULL);
+    PyObject_SetAttrString(self, "_c_obj", capsule);
+    players.push_back(self);
+    Py_RETURN_NONE;
+}
+
+static PyObject* Player_step(PyObject *self, PyObject *args) {
+    if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
+    Py_RETURN_NONE;
+}
+
+static PyObject* Player_set_position(PyObject *self, PyObject *args) {
+    double x, y;
+    if (!PyArg_ParseTuple(args, "Odd", &self, &x, &y)) return NULL;
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Player *player = (Player*)PyCapsule_GetPointer(capsule, "_c_obj");
+    player->x = x; player->y = y;
+    Py_RETURN_NONE;
+}
+
+static PyObject* Player_get_position(PyObject *self, PyObject *args) {
+    if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Player *player = (Player*)PyCapsule_GetPointer(capsule, "_c_obj");
+    PyObject* tuple = PyTuple_New(2);
+    PyTuple_SetItem(tuple, 0, PyFloat_FromDouble(player->x));
+    PyTuple_SetItem(tuple, 1, PyFloat_FromDouble(player->y));
+    return tuple;
+}
+
+static PyObject* Player_del(PyObject *self, PyObject *args) {
+    if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Player *player = (Player*)PyCapsule_GetPointer(capsule, "_c_obj");
+    players.erase(std::remove(players.begin(), players.end(), self), players.end());
+    delete player;
+    Py_RETURN_NONE;
 }
 
 static PyMethodDef DanmakuGroupMethods[] =
@@ -236,6 +294,16 @@ static PyMethodDef DanmakuGroupMethods[] =
     {"set_angm", DanmakuGroup_set_angular_momentum, METH_VARARGS, ""},
     {"set_position", DanmakuGroup_set_position, METH_VARARGS, ""},
     {"_run_modifier", DanmakuGroup_run_modifier, METH_VARARGS, ""},
+    {NULL, NULL, 0, NULL} ,
+};
+
+static PyMethodDef PlayerMethods[] =
+{
+    {"__init__", Player_init, METH_VARARGS, ""},
+    {"__del__", Player_del, METH_VARARGS, ""},
+    {"step", Player_step, METH_VARARGS, ""},
+    {"set_pos", Player_set_position, METH_VARARGS, ""},
+    {"get_pos", Player_get_position, METH_VARARGS, ""},
     {NULL, NULL, 0, NULL} ,
 };
 
@@ -287,5 +355,7 @@ PyMODINIT_FUNC PyInit__pydanmaku(void) {
     module = PyModule_Create(&danmakumodule);
     PyObject* danmakuGroup = createClassObject("_DanmakuGroup", DanmakuGroupMethods);
     PyModule_AddObject(module, "_DanmakuGroup", danmakuGroup);
+    PyObject* playerClass = createClassObject("Player", PlayerMethods);
+    PyModule_AddObject(module, "Player", playerClass);
     return module;
 }

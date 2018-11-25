@@ -22,7 +22,7 @@ using namespace glm;
 #include "../include/common/trig.h"
 
 #include "../include/renderer.h"
-
+#include "../include/player.h"
 #include "../include/group.h"
 
 #define WIDTH 640
@@ -233,6 +233,45 @@ void render_bullets(Group *group){
     initialize_quads(count, bulletImage, w, h);
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6*count, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &eab);
+    glDeleteVertexArrays(1, &vao);
+    glDeleteTextures(1, &texture);
+}
+
+void render_player(Player *player){
+    if(!render_inited) return;
+    if (last_size == 0) {
+        delete[] vertices_position;
+        delete[] indices;
+        delete[] texture_coord;
+        vertices_position = new GLfloat[8];
+        indices = new GLuint[6];
+        texture_coord = new GLfloat[8];
+        last_size = 1;
+    }
+    BYTE* texImage;
+    int w = 0, h = 0;
+    if (textureCache.find(player->texture) == textureCache.end()) {
+        texImage = load_image(player->texture.c_str(), &w, &h);
+        std::tuple<BYTE*, int, int> bulletData = std::make_tuple(texImage, w, h);
+        textureCache[player->texture] = bulletData;
+    } else {
+        std::tuple<BYTE*, int, int> texDat = textureCache[player->texture];
+        texImage = std::get<0>(texDat);
+        w = std::get<1>(texDat);
+        h = std::get<2>(texDat);
+    }
+
+    add_quad(
+        vertices_position, indices, texture_coord,
+        0, player->x, player->y, h, w, player->angle
+    );
+    initialize_quads(1, texImage, w, h);
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
     glDeleteBuffers(1, &vbo);

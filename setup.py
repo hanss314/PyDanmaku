@@ -30,7 +30,8 @@ pydanmaku = Extension('_pydanmaku',
         'src/common/shader.cpp',
         'src/common/png.cpp',
         'src/common/trig.cpp',
-        'src/group.cpp'
+        'src/group.cpp',
+        'src/player.cpp'
     ],
 )
 
@@ -40,7 +41,7 @@ setup(
     author='hanss314',
     url='https://github.com/hanss314/PyDanmaku',
     version=version,
-    packages=[''],
+    packages=['pydanmaku'],
     license='MIT',
     description='A Danmaku engine written in python',
     long_description=readme,
@@ -48,6 +49,6 @@ setup(
     install_requires=requirements,
     ext_modules=[pydanmaku],
     data_files=[
-        ('shaders', ['shaders/frag.shader', 'shaders/vert.shader'])
+        ('pydanmaku/shaders', ['shaders/frag.shader', 'shaders/vert.shader'])
     ],
 )

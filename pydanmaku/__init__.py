@@ -13,7 +13,7 @@ Bullet = namedtuple('Bullet', ['life', 'x', 'y', 'ang', 'lx', 'ly', 'la', 'speed
 
 
 def init():
-    pd._init(os.path.dirname(__file__).encode('utf-8'))
+    pd._init(os.path.dirname(__file__))
 
 def modifier(f: Callable[[int, Bullet], Bullet]) -> \
         Callable[[int], Callable[[Bullet], Bullet]]:
