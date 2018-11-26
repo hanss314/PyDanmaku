@@ -31,8 +31,8 @@ class DanmakuGroup(pd._DanmakuGroup):
     step: int
     modifiers: List[Callable[[int], Callable[[Bullet], Bullet]]]
 
-    def __init__(self, texture=''):
-        super().__init__(texture)
+    def __init__(self, texture='', is_laser=False):
+        super().__init__(texture, is_laser)
         self.subgroups = []
         self.texture = texture
         self.step = 0

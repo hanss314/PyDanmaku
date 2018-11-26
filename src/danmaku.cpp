@@ -14,11 +14,11 @@
 std::vector<PyObject*> players;
 
 static PyObject* DanmakuGroup_init(PyObject *self, PyObject *args) {
-    char* tex;
-    if (!PyArg_ParseTuple(args, "Os", &self, &tex)) return NULL;
+    char* tex; int is_laser = false;
+    if (!PyArg_ParseTuple(args, "Os|p", &self, &tex, &is_laser)) return NULL;
     std::string texture(tex);
     std::list<Bullet> bullet_list;
-    Group *group = new Group(bullet_list, texture);
+    Group *group = new Group(bullet_list, texture, is_laser);
     PyObject* capsule = PyCapsule_New(group, "_c_obj", NULL);
     PyObject_SetAttrString(self, "_c_obj", capsule);
     Py_RETURN_NONE;

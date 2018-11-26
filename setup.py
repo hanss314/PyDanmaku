@@ -49,6 +49,6 @@ setup(
     install_requires=requirements,
     ext_modules=[pydanmaku],
     data_files=[
-        ('pydanmaku/shaders', ['shaders/frag.shader', 'shaders/vert.shader'])
+        ('pydanmaku/shaders', ['pydanmaku/shaders/frag.shader', 'pydanmaku/shaders/vert.shader'])
     ],
 )

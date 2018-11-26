@@ -25,7 +25,7 @@ def framerate():
     time.sleep(to_wait)
 
 x = pd.DanmakuGroup("images/rice.png")
-y = pd.DanmakuGroup("images/rice.png")
+y = pd.DanmakuGroup("images/rice.png", True)
 i = 0
 
 player = Moveable(100, 100, 2, "images/amulet.png")
@@ -66,6 +66,7 @@ try:
     pos = 100
     for _ in range(60000):
         i+=1
+        
         if i % 4 == 1:
             for j in range(10):
                 x.add_bullet(
@@ -75,7 +76,7 @@ try:
         if i % 4 == 3:
             for j in range(10):
                 y.add_bullet(
-                    -pos+0*-100*violin(i/100), 0, False, 10, 15,
+                    -pos+0*-100*violin(i/100), 0, False, 5, 100,
                     angle=2*pi*violin(i/100) + j*pi/5, speed=5
                 )
         x.run()

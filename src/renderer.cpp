@@ -79,12 +79,12 @@ void initialize_quads(int count, BYTE* bulletImage, int w, int h) {
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
     glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
     glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-    // start load_image
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, bulletImage);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // end load_image
+    //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     // Get the location of the attributes that enters in the vertex shader
     GLint position_attribute = glGetAttribLocation(shader, "position");
 
@@ -224,10 +224,18 @@ void render_bullets(Group *group){
     }
 
     for (std::list<Bullet>::iterator b = group->bullet_list.begin(); b != group->bullet_list.end(); b++){
-        add_quad(
-            vertices_position, indices, texture_coord,
-            i, b->x, b->y, h, w, b->angle
-        );
+        if (group->is_laser){
+            add_quad(
+                    vertices_position, indices, texture_coord,
+                    i, b->x, b->y, b->height, b->width, b->angle
+            );
+        } else {
+            add_quad(
+                    vertices_position, indices, texture_coord,
+                    i, b->x, b->y, h, w, b->angle
+            );
+        }
+
         i++;
     }
     initialize_quads(count, bulletImage, w, h);
