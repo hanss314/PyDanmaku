@@ -79,6 +79,8 @@ try:
                     -pos+0*-100*violin(i/100), 0, False, 5, 100,
                     angle=2*pi*violin(i/100) + j*pi/5, speed=5
                 )
+
+        player.run()
         x.run()
         x.render()
         y.run()

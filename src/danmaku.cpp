@@ -215,13 +215,6 @@ static PyObject* Danmaku_close(PyObject *self, PyObject *args){
 }
 
 static PyObject* Danmaku_render(PyObject *self, PyObject *args){
-    for(std::vector<PyObject*>::iterator it = players.begin(); it != players.end(); ++it) {
-        PyObject* capsule = PyObject_GetAttrString(*it, "_c_obj");
-        Player *player = (Player*)PyCapsule_GetPointer(capsule, "_c_obj");
-        PyObject* step_func = PyObject_GetAttrString(*it, "step");
-        PyObject_CallFunctionObjArgs(step_func, NULL);
-        render_player(player);
-    }
     renderer_draw();
     Py_RETURN_NONE;
 }
@@ -282,6 +275,17 @@ static PyObject* Player_get_position(PyObject *self, PyObject *args) {
     return tuple;
 }
 
+static PyObject* Player_run(PyObject *self, PyObject *args) {
+
+    if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Player *player = (Player*)PyCapsule_GetPointer(capsule, "_c_obj");
+    PyObject* step_func = PyObject_GetAttrString(self, "step");
+    PyObject_CallFunctionObjArgs(step_func, NULL);
+    render_player(player);
+    Py_RETURN_NONE;
+}
+
 static PyObject* Player_del(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
     PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
@@ -316,6 +320,7 @@ static PyMethodDef PlayerMethods[] =
     {"collision", Player_collision, METH_VARARGS, ""},
     {"set_pos", Player_set_position, METH_VARARGS, ""},
     {"get_pos", Player_get_position, METH_VARARGS, ""},
+    {"run", Player_run, METH_VARARGS, ""},
     {NULL, NULL, 0, NULL} ,
 };
 
