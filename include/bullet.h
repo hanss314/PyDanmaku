@@ -33,8 +33,11 @@ public:
         double speed, double angle,
         double accel, double ang_m
     );
+
+    virtual ~Bullet(){};
     bool run(double);
     bool run(double, Bullet);
+    virtual void del(){};
     virtual void render(bool is_laser, int i, double h, double w) {
         if (is_laser){
             add_quad(i, this->x, this->y, this->height, this->width, this->angle);

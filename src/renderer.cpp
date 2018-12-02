@@ -200,7 +200,7 @@ void renderer_init(const char* directory) {
 }
 
 void render_curvy(std::deque<std::tuple<double,double>> positions) {
-    printf("TODO: Rendering");
+    //printf("TODO: Render\n");
 }
 
 void render_bullets(Group *group){

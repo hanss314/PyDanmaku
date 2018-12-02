@@ -20,8 +20,11 @@ public:
     ) : Bullet(x, y, is_rect, width, height, speed, angle, accel, ang_m) {
         this->_is_curvy = true;
     }
-
+    ~CurvyLaser(){ this->positions.clear(); }
     std::deque<std::tuple<double,double>> positions;
+    void del() override{
+    //      this->positions.clear();
+    }
     bool run(double timestep, Bullet ref);
     void render(bool b, int i, double h, double w) override{
         render_curvy(this->positions);

@@ -30,8 +30,8 @@ static PyObject* DanmakuGroup_del(PyObject *self, PyObject *args) {
     PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
     Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
     std::list<Bullet*> *bullets = &(group->bullet_list);
-    
-    for (std::list<Bullet*>::iterator b = bullets.begin(); b != bullets.end(); b++){
+    for (std::list<Bullet*>::iterator b = bullets->begin(); b != bullets->end(); b++){
+        (*b)->del();
         delete *b;
     }
     bullets->clear();
@@ -68,6 +68,8 @@ static PyObject* DanmakuGroup_run(PyObject *self, PyObject *args) {
     std::list<Bullet*>::iterator b = bullets->begin();
     while (b != bullets->end()){
         if((*b)->run(1.0f, *group)){
+            (*b)->del();
+            delete (*b);
             bullets->erase(b++);
         } else {
             b++;
@@ -168,6 +170,8 @@ static PyObject* DanmakuGroup_run_modifier(PyObject *self, PyObject *args) {
         PyObject *bullet = fromBullet(bullet_type, **b);
         PyObject *result = PyObject_CallFunctionObjArgs(modifier, bullet, NULL);
         if (result == NULL){
+            (*b)->del();
+            delete (*b);
             bullets->erase(b++);
             continue;
         }
@@ -324,6 +328,7 @@ static PyObject* Player_del(PyObject *self, PyObject *args) {
     PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
     Player *player = (Player*)PyCapsule_GetPointer(capsule, "_c_obj");
     players.erase(std::remove(players.begin(), players.end(), self), players.end());
+    printf("Player deleted\n");
     delete player;
     Py_RETURN_NONE;
 }
