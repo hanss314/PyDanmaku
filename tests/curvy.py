@@ -28,7 +28,7 @@ x = pd.DanmakuGroup("images/rice.png")
 y = pd.DanmakuGroup("images/rice.png", True)
 i = 0
 
-player = Moveable(100, 100, 2, "images/amulet.png")
+#player = Moveable(100, 100, 2, "images/amulet.png")
 
 violin_freqs = [
     0.995, 0.940, 0.425, 0.480, 0.0, 0.365, 0.040, 0.085, 0.0, 0.09
@@ -75,12 +75,12 @@ try:
                 )
         if i % 4 == 3:
             for j in range(10):
-                y.curvy_laser(
+                y.add_bullet(
                     -pos+0*-100*violin(i/100), 0, False, 5, 100,
                     angle=2*pi*violin(i/100) + j*pi/5, speed=5
                 )
 
-        player.run()
+#        player.run()
         x.run()
         x.render()
         y.run()

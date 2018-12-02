@@ -156,7 +156,7 @@ void renderer_init(const char* directory) {
     window = glfwCreateWindow(WIDTH, HEIGHT, "PyDanmaku", NULL, NULL);
 
     if( window == NULL ){
-        fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
+        fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible.\n" );
         getchar();
         glfwTerminate();
         return;
@@ -200,7 +200,38 @@ void renderer_init(const char* directory) {
 }
 
 void render_curvy(std::deque<std::tuple<double,double>> positions) {
-    //printf("TODO: Render\n");
+    if(!render_inited) return;
+    int count = (int) positions.size();
+    if (count > last_size || last_size == 0) {
+        delete[] vertices_position;
+        delete[] indices;
+        delete[] texture_coord;
+        vertices_position = new GLfloat[8*count];
+        indices = new GLuint[6*count];
+        texture_coord = new GLfloat[8*count];
+        last_size = count;
+    }
+    BYTE* bulletImage;
+    int w = 0, h = 0;
+    
+    std::tuple<BYTE*, int, int> bulletData = textureCache[DEFAULT_TEXTURE];
+    bulletImage = std::get<0>(bulletData);
+    w = std::get<1>(bulletData);
+    h = std::get<2>(bulletData);
+    
+    for(int i=0; i<count; i++){
+        std::tuple<double,double> vertex = positions[i];
+        add_quad(i, std::get<0>(vertex), std::get<1>(vertex), w, h, 0);
+    }
+    
+    initialize_quads(count, bulletImage, w, h);
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, 6*count, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &eab);
+    glDeleteVertexArrays(1, &vao);
 }
 
 void render_bullets(Group *group){

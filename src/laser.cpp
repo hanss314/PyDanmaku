@@ -2,11 +2,11 @@
 // Created by hanss on 11/28/18.
 //
 
+#include <iostream>
 #include "../include/laser.h"
 #include "../include/renderer.h"
 
 bool CurvyLaser::run(double timestep, Bullet ref) {
-    printf("curvy run\n");
     Bullet::run(timestep, ref);
     std::tuple<double,double> position = std::make_tuple(this->x,this->y);
     this->positions.push_front(position);
@@ -21,7 +21,6 @@ bool CurvyLaser::run(double timestep, Bullet ref) {
 }
 
 bool CurvyLaser::run(double timestep) {
-    printf("curvy run\n");
     Bullet::run(timestep);
     std::tuple<double,double> position = std::make_tuple(this->x,this->y);
     this->positions.push_front(position);
