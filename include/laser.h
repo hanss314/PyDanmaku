@@ -25,7 +25,8 @@ public:
     void del() override{
     //      this->positions.clear();
     }
-    bool run(double timestep, Bullet ref);
+    bool run(double timestep, Bullet ref) override;
+    bool run(double timestep) override;
     void render(bool b, int i, double h, double w) override{
         render_curvy(this->positions);
     }

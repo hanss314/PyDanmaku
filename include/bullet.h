@@ -35,8 +35,8 @@ public:
     );
 
     virtual ~Bullet(){};
-    bool run(double);
-    bool run(double, Bullet);
+    virtual bool run(double);
+    virtual bool run(double, Bullet);
     virtual void del(){};
     virtual void render(bool is_laser, int i, double h, double w) {
         if (is_laser){
