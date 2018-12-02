@@ -6,18 +6,19 @@
 #include <string>
 
 #include <GL/glew.h>
-#include "bullet.h"
 
 #ifndef DANMAKU_GROUP_H
 #define DANMAKU_GROUP_H
 
-class Group : public Bullet{
+#include "bullet.h"
+
+
+class Group : public Bullet{ 
 public:
-    std::list<Bullet> bullet_list;
+    std::list<Bullet*> bullet_list;
     std::string texture;
-    Group(std::list<Bullet>, std::string, int);
+    Group(std::list<Bullet*>, std::string, int);
     int is_laser;
 };
-
 
 #endif //DANMAKU_GROUP_H

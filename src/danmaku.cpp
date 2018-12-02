@@ -10,6 +10,7 @@
 #include "../include/renderer.h"
 #include "../include/group.h"
 #include "../include/player.h"
+#include "../include/laser.h"
 
 std::vector<PyObject*> players;
 
@@ -17,7 +18,7 @@ static PyObject* DanmakuGroup_init(PyObject *self, PyObject *args) {
     char* tex; int is_laser = false;
     if (!PyArg_ParseTuple(args, "Os|p", &self, &tex, &is_laser)) return NULL;
     std::string texture(tex);
-    std::list<Bullet> bullet_list;
+    std::list<Bullet*> bullet_list;
     Group *group = new Group(bullet_list, texture, is_laser);
     PyObject* capsule = PyCapsule_New(group, "_c_obj", NULL);
     PyObject_SetAttrString(self, "_c_obj", capsule);
@@ -28,18 +29,22 @@ static PyObject* DanmakuGroup_del(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "O", &self)) return NULL;
     PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
     Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
-    std::list<Bullet> *bullets = &(group->bullet_list);
+    std::list<Bullet*> *bullets = &(group->bullet_list);
+    
+    for (std::list<Bullet*>::iterator b = bullets.begin(); b != bullets.end(); b++){
+        delete *b;
+    }
     bullets->clear();
     delete group;
     Py_RETURN_NONE;
 }
 
-void check_collisions(std::list<Bullet> bullets){
-    for (std::list<Bullet>::iterator b = bullets.begin(); b != bullets.end(); b++){
+void check_collisions(std::list<Bullet*> bullets){
+    for (std::list<Bullet*>::iterator b = bullets.begin(); b != bullets.end(); b++){
         for(std::vector<PyObject*>::iterator it = players.begin(); it != players.end(); ++it) {
             PyObject* capsule = PyObject_GetAttrString(*it, "_c_obj");
             Player *p = (Player*)PyCapsule_GetPointer(capsule, "_c_obj");
-            if(b->collides(p->x, p->y, p->r)) {
+            if((*b)->collides(p->x, p->y, p->r)) {
                 PyObject *coll_func = PyObject_GetAttrString(*it, "collision");
                 PyObject_CallFunctionObjArgs(coll_func, NULL);
             }
@@ -59,10 +64,10 @@ static PyObject* DanmakuGroup_run(PyObject *self, PyObject *args) {
         Group *pargroup = (Group*)PyCapsule_GetPointer(parcapsule, "_c_obj");
         group->run(1.0f, *pargroup);
     }
-    std::list<Bullet> *bullets = &(group->bullet_list);
-    std::list<Bullet>::iterator b = bullets->begin();
+    std::list<Bullet*> *bullets = &(group->bullet_list);
+    std::list<Bullet*>::iterator b = bullets->begin();
     while (b != bullets->end()){
-        if((*b).run(1.0f, *group)){
+        if((*b)->run(1.0f, *group)){
             bullets->erase(b++);
         } else {
             b++;
@@ -157,16 +162,16 @@ static PyObject* DanmakuGroup_run_modifier(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "OOO", &self, &bullet_type, &modifier)) return NULL;
     PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
     Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
-    std::list<Bullet> *bullets = &(group->bullet_list);
-    std::list<Bullet>::iterator b = bullets->begin();
+    std::list<Bullet*> *bullets = &(group->bullet_list);
+    std::list<Bullet*>::iterator b = bullets->begin();
     while (b != bullets->end()){
-        PyObject *bullet = fromBullet(bullet_type, *b);
+        PyObject *bullet = fromBullet(bullet_type, **b);
         PyObject *result = PyObject_CallFunctionObjArgs(modifier, bullet, NULL);
         if (result == NULL){
             bullets->erase(b++);
             continue;
         }
-        fromPyObj(result, &(*b));
+        fromPyObj(result, *b);
         Py_DECREF(bullet); Py_DECREF(result);
         b++;
     }
@@ -192,11 +197,39 @@ static PyObject* DanmakuGroup_add(PyObject *self, PyObject *args){
     }
     PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
     Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
-    std::list<Bullet> *bullets = &(group->bullet_list);
-    Bullet b(
+    std::list<Bullet*> *bullets = &(group->bullet_list);
+    Bullet *b = new Bullet(
         x, y, (bool)is_rect,
         width, height, speed, angle,
         acceleration, angular_momentum
+    );
+    bullets->emplace_front(b);
+    Py_RETURN_NONE;
+}
+
+static PyObject* DanmakuGroup_curvy_laser(PyObject *self, PyObject *args){
+    double x=0.0f;
+    double y=0.0f;
+    int is_rect=false;
+    double height=0.0f, width=0.0f;
+    double angle=0.0f, speed=0.0f;
+    double acceleration=0.0f, angular_momentum=0.0f;
+    if (!PyArg_ParseTuple(
+            args, "Oddpdddddd",
+            &self, &x, &y, &is_rect, &height, &width,
+            &angle, &speed,
+            &acceleration, &angular_momentum
+    )) {return NULL;}
+    if(is_rect && width == 0.0f){
+        width = height;
+    }
+    PyObject* capsule = PyObject_GetAttrString(self, "_c_obj");
+    Group *group = (Group*)PyCapsule_GetPointer(capsule, "_c_obj");
+    std::list<Bullet*> *bullets = &(group->bullet_list);
+    CurvyLaser *b = new CurvyLaser(
+            x, y, (bool)is_rect,
+            width, height, speed, angle,
+            acceleration, angular_momentum
     );
     bullets->emplace_front(b);
     Py_RETURN_NONE;
@@ -302,6 +335,7 @@ static PyMethodDef DanmakuGroupMethods[] =
     {"_run", DanmakuGroup_run, METH_VARARGS, ""},
     {"_render", DanmakuGroup_render, METH_VARARGS, ""},
     {"_add_bullet", DanmakuGroup_add, METH_VARARGS, ""},
+    {"_curvy_laser", DanmakuGroup_curvy_laser, METH_VARARGS, ""},
     {"set_position", DanmakuGroup_set_position, METH_VARARGS, ""},
     {"set_speed", DanmakuGroup_set_speed, METH_VARARGS, ""},
     {"set_angle", DanmakuGroup_set_angle, METH_VARARGS, ""},

@@ -1,0 +1,51 @@
+=================================================================
+==16745==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 156630 byte(s) in 142 object(s) allocated from:
+    #0 0x7f3919751019 in __interceptor_malloc /build/gcc/src/gcc/libsanitizer/asan/asan_malloc_linux.cc:86
+    #1 0x7f3919190408 in PyObject_Malloc (/usr/lib/libpython3.7m.so.1.0+0xf0408)
+
+Direct leak of 78880 byte(s) in 340 object(s) allocated from:
+    #0 0x7f3919752d29 in operator new(unsigned long) /build/gcc/src/gcc/libsanitizer/asan/asan_new_delete.cc:90
+    #1 0x7f391960e80a in DanmakuGroup_curvy_laser src/danmaku.cpp:229
+
+Direct leak of 1040 byte(s) in 2 object(s) allocated from:
+    #0 0x7f3919751019 in __interceptor_malloc /build/gcc/src/gcc/libsanitizer/asan/asan_malloc_linux.cc:86
+    #1 0x7f39191927ad  (/usr/lib/libpython3.7m.so.1.0+0xf27ad)
+
+Direct leak of 64 byte(s) in 1 object(s) allocated from:
+    #0 0x7f3919752d29 in operator new(unsigned long) /build/gcc/src/gcc/libsanitizer/asan/asan_new_delete.cc:90
+    #1 0x7f391960e65b in Player_init src/danmaku.cpp:271
+
+Direct leak of 2 byte(s) in 2 object(s) allocated from:
+    #0 0x7f3919751019 in __interceptor_malloc /build/gcc/src/gcc/libsanitizer/asan/asan_malloc_linux.cc:86
+    #1 0x7f3919190ed8 in PyMem_Malloc (/usr/lib/libpython3.7m.so.1.0+0xf0ed8)
+
+Indirect leak of 174080 byte(s) in 340 object(s) allocated from:
+    #0 0x7f3919752d29 in operator new(unsigned long) /build/gcc/src/gcc/libsanitizer/asan/asan_new_delete.cc:90
+    #1 0x7f391960ebf9 in __gnu_cxx::new_allocator<std::tuple<double, double> >::allocate(unsigned long, void const*) /usr/include/c++/8.2.1/ext/new_allocator.h:111
+    #2 0x7f391960ebf9 in std::allocator_traits<std::allocator<std::tuple<double, double> > >::allocate(std::allocator<std::tuple<double, double> >&, unsigned long) /usr/include/c++/8.2.1/bits/alloc_traits.h:436
+    #3 0x7f391960ebf9 in std::_Deque_base<std::tuple<double, double>, std::allocator<std::tuple<double, double> > >::_M_allocate_node() /usr/include/c++/8.2.1/bits/stl_deque.h:603
+    #4 0x7f391960ebf9 in std::_Deque_base<std::tuple<double, double>, std::allocator<std::tuple<double, double> > >::_M_create_nodes(std::tuple<double, double>**, std::tuple<double, double>**) /usr/include/c++/8.2.1/bits/stl_deque.h:728
+    #5 0x7f391960ebf9 in std::_Deque_base<std::tuple<double, double>, std::allocator<std::tuple<double, double> > >::_M_initialize_map(unsigned long) /usr/include/c++/8.2.1/bits/stl_deque.h:702
+
+Indirect leak of 21760 byte(s) in 340 object(s) allocated from:
+    #0 0x7f3919752d29 in operator new(unsigned long) /build/gcc/src/gcc/libsanitizer/asan/asan_new_delete.cc:90
+    #1 0x7f391960ebc8 in __gnu_cxx::new_allocator<std::tuple<double, double>*>::allocate(unsigned long, void const*) /usr/include/c++/8.2.1/ext/new_allocator.h:111
+    #2 0x7f391960ebc8 in std::allocator_traits<std::allocator<std::tuple<double, double>*> >::allocate(std::allocator<std::tuple<double, double>*>&, unsigned long) /usr/include/c++/8.2.1/bits/alloc_traits.h:436
+    #3 0x7f391960ebc8 in std::_Deque_base<std::tuple<double, double>, std::allocator<std::tuple<double, double> > >::_M_allocate_map(unsigned long) /usr/include/c++/8.2.1/bits/stl_deque.h:617
+    #4 0x7f391960ebc8 in std::_Deque_base<std::tuple<double, double>, std::allocator<std::tuple<double, double> > >::_M_initialize_map(unsigned long) /usr/include/c++/8.2.1/bits/stl_deque.h:690
+
+Indirect leak of 19920 byte(s) in 22 object(s) allocated from:
+    #0 0x7f3919751019 in __interceptor_malloc /build/gcc/src/gcc/libsanitizer/asan/asan_malloc_linux.cc:86
+    #1 0x7f3919190408 in PyObject_Malloc (/usr/lib/libpython3.7m.so.1.0+0xf0408)
+
+Indirect leak of 544 byte(s) in 1 object(s) allocated from:
+    #0 0x7f3919751019 in __interceptor_malloc /build/gcc/src/gcc/libsanitizer/asan/asan_malloc_linux.cc:86
+    #1 0x7f39191927ad  (/usr/lib/libpython3.7m.so.1.0+0xf27ad)
+
+Indirect leak of 31 byte(s) in 1 object(s) allocated from:
+    #0 0x7f3919752d29 in operator new(unsigned long) /build/gcc/src/gcc/libsanitizer/asan/asan_new_delete.cc:90
+    #1 0x7f39190288ff in std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_mutate(unsigned long, unsigned long, char const*, unsigned long) /build/gcc/src/gcc-build/x86_64-pc-linux-gnu/libstdc++-v3/include/bits/basic_string.tcc:317
+
+SUMMARY: AddressSanitizer: 452951 byte(s) leaked in 1191 allocation(s).

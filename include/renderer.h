@@ -1,4 +1,5 @@
 #include <list>
+#include <deque>
 #include "bullet.h"
 #include <FreeImage.h>
 #include <GL/glew.h>
@@ -18,4 +19,6 @@ void render_player(Player *player);
 void renderer_close();
 void renderer_draw();
 int* get_keys();
+void add_quad(int, double, double, double, double, double);
+void render_curvy(std::deque<std::tuple<double,double>>);
 #endif //DANMAKU_RENDERER_H

@@ -7,7 +7,7 @@
 #include "../include/bullet.h"
 #include "../include/group.h"
 
-Group::Group(std::list<Bullet> bullet_list, std::string texture, int is_laser){
+Group::Group(std::list<Bullet*> bullet_list, std::string texture, int is_laser){
     this->bullet_list = bullet_list;
     this->texture = texture;
     this->x = this->lx = 320.0;
@@ -22,5 +22,7 @@ Group::Group(std::list<Bullet> bullet_list, std::string texture, int is_laser){
     this->angular_momentum = 0;
 
     this->is_laser = is_laser;
+
+    this->_is_curvy = false;
 }
 

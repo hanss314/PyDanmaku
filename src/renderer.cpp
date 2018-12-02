@@ -6,6 +6,7 @@
 #include <list>
 #include <map>
 #include <tuple>
+#include <deque>
 #include <stdbool.h>
 #include "../include/bullet.h"
 
@@ -24,6 +25,7 @@ using namespace glm;
 #include "../include/renderer.h"
 #include "../include/player.h"
 #include "../include/group.h"
+#include "../include/laser.h"
 
 #define WIDTH 640
 #define HEIGHT 480
@@ -109,7 +111,7 @@ void apply_angle(double *x, double *y, double angle){
     *y = ny;
 }
 
-void add_quad(GLfloat vert[], GLuint ind[], GLfloat tex[], int i, double x, double y, double h, double w, double angle){
+void add_quad(int i, double x, double y, double h, double w, double angle){
     double coords[8] = {
          -w/2.0, -h/2.0,
           w/2.0, -h/2.0,
@@ -118,17 +120,17 @@ void add_quad(GLfloat vert[], GLuint ind[], GLfloat tex[], int i, double x, doub
     };
     for (int j=0; j<8; j+=2){
         apply_angle(&(coords[j]), &(coords[j+1]), angle);
-        vert[8*i+j]   = XU*(coords[j]   + x)-1.0;
-        vert[8*i+j+1] = YU*(coords[j+1] + y)-1.0;
+        vertices_position[8*i+j]   = XU*(coords[j]   + x)-1.0;
+        vertices_position[8*i+j+1] = YU*(coords[j+1] + y)-1.0;
     }
 
-    ind[6*i+0] = ind[6*i+5] = 4*i+0;
-    ind[6*i+2] = ind[6*i+3] = 4*i+2;
-    ind[6*i+1] =              4*i+1;
-    ind[6*i+4] =              4*i+3;
+    indices[6*i+0] = indices[6*i+5] = 4*i+0;
+    indices[6*i+2] = indices[6*i+3] = 4*i+2;
+    indices[6*i+1] =                  4*i+1;
+    indices[6*i+4] =                  4*i+3;
 
-    tex[8*i+0] = tex[8*i+1] = tex[8*i+3] = tex[8*i+6] = 0.0;
-    tex[8*i+2] = tex[8*i+4] = tex[8*i+5] = tex[8*i+7] = 1.0;
+    texture_coord[8*i+0] = texture_coord[8*i+1] = texture_coord[8*i+3] = texture_coord[8*i+6] = 0.0;
+    texture_coord[8*i+2] = texture_coord[8*i+4] = texture_coord[8*i+5] = texture_coord[8*i+7] = 1.0;
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
@@ -197,6 +199,10 @@ void renderer_init(const char* directory) {
 
 }
 
+void render_curvy(std::deque<std::tuple<double,double>> positions) {
+    printf("TODO: Rendering");
+}
+
 void render_bullets(Group *group){
     if(!render_inited) return;
     int count = group->bullet_list.size();
@@ -223,20 +229,13 @@ void render_bullets(Group *group){
         h = std::get<2>(bulletData);
     }
 
-    for (std::list<Bullet>::iterator b = group->bullet_list.begin(); b != group->bullet_list.end(); b++){
-        if (group->is_laser){
-            add_quad(
-                    vertices_position, indices, texture_coord,
-                    i, b->x, b->y, b->height, b->width, b->angle
-            );
+    for (std::list<Bullet*>::iterator b = group->bullet_list.begin(); b != group->bullet_list.end(); b++){
+        (*b)->render(group->is_laser, i, h, w);
+        if ((*b)->_is_curvy){
+            i++;//count--;
         } else {
-            add_quad(
-                    vertices_position, indices, texture_coord,
-                    i, b->x, b->y, h, w, b->angle
-            );
+            i++;
         }
-
-        i++;
     }
     initialize_quads(count, bulletImage, w, h);
     glBindVertexArray(vao);
@@ -274,7 +273,6 @@ void render_player(Player *player){
     }
 
     add_quad(
-        vertices_position, indices, texture_coord,
         0, player->x, player->y, h, w, player->angle
     );
     initialize_quads(1, texImage, w, h);

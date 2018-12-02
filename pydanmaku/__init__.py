@@ -77,4 +77,13 @@ class DanmakuGroup(pd._DanmakuGroup):
 
         super()._add_bullet(x, y, is_rect, height, width, angle, speed, acceleration, angular_momentum)
 
+    def curvy_laser(
+            self, x, y, is_rect=True,
+            height=0, width=0, radius=None,
+            angle=0, speed=0, acceleration=0, angular_momentum=0
+    ):
+        if radius is not None:
+            height = width = radius
+
+        super()._curvy_laser(x, y, is_rect, height, width, angle, speed, acceleration, angular_momentum)
 

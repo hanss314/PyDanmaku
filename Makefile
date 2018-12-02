@@ -9,7 +9,8 @@ ODIR = obj
 
 # File names
 _OBJ = src/danmaku.o src/bullet.o src/renderer.o src/group.o \
-	src/common/shader.o src/common/png.o src/common/trig.o src/player.o
+	src/common/shader.o src/common/png.o src/common/trig.o src/player.o \
+	src/laser.o
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ:src/%=%))
 

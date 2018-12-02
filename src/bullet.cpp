@@ -126,4 +126,5 @@ Bullet::Bullet(
     this->angular_momentum = ang_m;
     this->s = this->ls = sinf(angle);
     this->c = this->lc = cosf(angle);
+    this->_is_curvy = false;
 }

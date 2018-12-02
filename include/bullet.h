@@ -1,6 +1,9 @@
 #include <stdbool.h>
+
 #ifndef DANMAKU_H
 #define DANMAKU_H
+
+extern void add_quad(int, double, double, double, double, double);
 
 class Bullet {
 public:
@@ -12,6 +15,7 @@ public:
     double angular_momentum;
     bool is_rect;
     bool _ref_applied = false;
+    bool _is_curvy = false;
     double height;
     double width;
     double radius;
@@ -31,6 +35,13 @@ public:
     );
     bool run(double);
     bool run(double, Bullet);
+    virtual void render(bool is_laser, int i, double h, double w) {
+        if (is_laser){
+            add_quad(i, this->x, this->y, this->height, this->width, this->angle);
+        } else {
+            add_quad(i, this->x, this->y, h, w, this->angle);
+        }
+    };
 
 };
 
