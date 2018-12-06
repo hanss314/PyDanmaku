@@ -218,14 +218,14 @@ void add_curvy(int i,
         nang = atan2(ny-cy, nx-cx);
     }
     w /= 2;
-    double vang = (pang+nang)/2.0 + M_PI/2;
-    int s = 1;
-    if (vang < 0) s = -1;
+    double vang = (pang+nang)/2.0 - M_PI/2;
+    double s = 1.0;
+    if (pang<vang) s = 0.0;
 
-    vertices_position[4*i+0] = XU*(cx + s*w*l_cos(vang))-1.0;
-    vertices_position[4*i+1] = YU*(cy + s*w*l_sin(vang))-1.0;
-    vertices_position[4*i+2] = XU*(cx - s*w*l_cos(vang))-1.0;
-    vertices_position[4*i+3] = YU*(cy - s*w*l_sin(vang))-1.0;
+    vertices_position[4*i+0] = XU*(cx + w*l_cos(vang))-1.0;
+    vertices_position[4*i+1] = YU*(cy + w*l_sin(vang))-1.0;
+    vertices_position[4*i+2] = XU*(cx - w*l_cos(vang))-1.0;
+    vertices_position[4*i+3] = YU*(cy - w*l_sin(vang))-1.0;
     
     texture_coord[4*i+1] = 1.0; texture_coord[4*i+3] = 0.0;
     texture_coord[4*i+2] = texture_coord[4*i] = distance;
@@ -348,7 +348,7 @@ void render_bullets(Group *group){
     for (std::list<Bullet*>::iterator b = group->bullet_list.begin(); b != group->bullet_list.end(); b++){
         (*b)->render(group->is_laser, i, h, w);
         if ((*b)->_is_curvy){
-            i++;//count--;
+            i++; count--;
         } else {
             i++;
         }
