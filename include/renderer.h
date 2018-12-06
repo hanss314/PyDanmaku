@@ -20,5 +20,5 @@ void renderer_close();
 void renderer_draw();
 int* get_keys();
 void add_quad(int, double, double, double, double, double);
-void render_curvy(std::deque<std::tuple<double,double>>);
+void render_curvy(std::deque<std::tuple<double,double>>, std::string);
 #endif //DANMAKU_RENDERER_H

@@ -4,13 +4,14 @@
 
 #include <deque>
 #include <tuple>
+#include <string>
 
 #ifndef DANMAKU_LASER_H
 #define DANMAKU_LASER_H
 
 #include "bullet.h"
 
-extern void render_curvy(std::deque<std::tuple<double,double>>);
+extern void render_curvy(std::deque<std::tuple<double,double>>, std::string);
 
 class CurvyLaser : public Bullet{
 public:
@@ -27,8 +28,8 @@ public:
     }
     bool run(double timestep, Bullet ref) override;
     bool run(double timestep) override;
-    void render(bool b, int i, double h, double w) override{
-        render_curvy(this->positions);
+    void render(bool b, int i, double h, double w, std::string texture) override{
+        render_curvy(this->positions, texture);
     }
 };
 

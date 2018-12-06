@@ -234,7 +234,7 @@ void add_curvy(int i,
     texture_coord[4*i+2] = texture_coord[4*i] = distance;
 }
 
-void render_curvy(std::deque<std::tuple<double,double>> positions) {
+void render_curvy(std::deque<std::tuple<double,double>> positions, std::string tex_str) {
     if(!render_inited) return;
     int count = (int) positions.size();
     if (count > last_size || last_size == 0) {
@@ -250,10 +250,16 @@ void render_curvy(std::deque<std::tuple<double,double>> positions) {
     BYTE* bulletImage;
     int w = 0, h = 0;
     
-    std::tuple<BYTE*, int, int> bulletData = textureCache[DEFAULT_TEXTURE];
-    bulletImage = std::get<0>(bulletData);
-    w = std::get<1>(bulletData);
-    h = std::get<2>(bulletData);
+    if (textureCache.find(tex_str) == textureCache.end()) {
+        bulletImage = load_image(tex_str.c_str(), &w, &h);
+        std::tuple<BYTE*, int, int> bulletData = std::make_tuple(bulletImage, w, h);
+        textureCache[tex_str] = bulletData;
+    } else {
+        std::tuple<BYTE*, int, int> bulletData = textureCache[tex_str];
+        bulletImage = std::get<0>(bulletData);
+        w = std::get<1>(bulletData);
+        h = std::get<2>(bulletData);
+    }
     
     add_curvy(0, positions[0], positions[0], positions[1], h, 0.0);
     for(int i=1; i<count-1; i++){
@@ -320,6 +326,7 @@ void render_curvy(std::deque<std::tuple<double,double>> positions) {
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &eab);
     glDeleteVertexArrays(1, &vao);
+    glDeleteTextures(1, &texture);
 }
 
 void render_bullets(Group *group){
@@ -349,7 +356,7 @@ void render_bullets(Group *group){
     }
 
     for (std::list<Bullet*>::iterator b = group->bullet_list.begin(); b != group->bullet_list.end(); b++){
-        (*b)->render(group->is_laser, i, h, w);
+        (*b)->render(group->is_laser, i, h, w, group->texture);
         if ((*b)->_is_curvy){
             i++; count--;
         } else {

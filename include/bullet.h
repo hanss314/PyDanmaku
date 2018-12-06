@@ -38,7 +38,7 @@ public:
     virtual bool run(double);
     virtual bool run(double, Bullet);
     virtual void del(){};
-    virtual void render(bool is_laser, int i, double h, double w) {
+    virtual void render(bool is_laser, int i, double h, double w, std::string texture) {
         if (is_laser){
             add_quad(i, this->x, this->y, this->height, this->width, this->angle);
         } else {
