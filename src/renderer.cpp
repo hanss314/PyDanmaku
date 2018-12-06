@@ -218,9 +218,12 @@ void add_curvy(int i,
         nang = atan2(ny-cy, nx-cx);
     }
     w /= 2;
-    double vang = (pang+nang)/2.0 - M_PI/2;
-    double s = 1.0;
-    if (pang<vang) s = 0.0;
+    
+    double vang = (pang+nang)/2.0 + M_PI/2;
+    if ((pang<0)!=(nang<0) && (pang>M_PI/2 || nang>M_PI/2)){
+        vang += M_PI;
+    }    
+
 
     vertices_position[4*i+0] = XU*(cx + w*l_cos(vang))-1.0;
     vertices_position[4*i+1] = YU*(cy + w*l_sin(vang))-1.0;

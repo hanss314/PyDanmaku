@@ -13,7 +13,7 @@ public:
     double speed;
     double acceleration;
     double angular_momentum;
-    bool is_rect;
+    bool is_rect = false;
     bool _ref_applied = false;
     bool _is_curvy = false;
     double height;
