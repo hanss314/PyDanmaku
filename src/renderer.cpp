@@ -202,7 +202,8 @@ void renderer_init(const char* directory) {
 void add_curvy(int i,
     std::tuple<double,double> prev, 
     std::tuple<double,double> curr, 
-    std::tuple<double,double> next, 
+    std::tuple<double,double> next,
+    GLfloat *vert, GLfloat *text,
     double w, double distance
 ){
     double px = std::get<0>(prev), py = std::get<1>(prev);
@@ -225,28 +226,24 @@ void add_curvy(int i,
     }    
 
 
-    vertices_position[4*i+0] = XU*(cx + w*l_cos(vang))-1.0;
-    vertices_position[4*i+1] = YU*(cy + w*l_sin(vang))-1.0;
-    vertices_position[4*i+2] = XU*(cx - w*l_cos(vang))-1.0;
-    vertices_position[4*i+3] = YU*(cy - w*l_sin(vang))-1.0;
+    vert[4*i+0] = XU*(cx + w*l_cos(vang))-1.0;
+    vert[4*i+1] = YU*(cy + w*l_sin(vang))-1.0;
+    vert[4*i+2] = XU*(cx - w*l_cos(vang))-1.0;
+    vert[4*i+3] = YU*(cy - w*l_sin(vang))-1.0;
     
-    texture_coord[4*i+1] = 1.0; texture_coord[4*i+3] = 0.0;
-    texture_coord[4*i+2] = texture_coord[4*i] = distance;
+    text[4*i+1] = 1.0; text[4*i+3] = 0.0;
+    text[4*i+2] = text[4*i] = distance;
 }
 
 void render_curvy(std::deque<std::tuple<double,double>> positions, std::string tex_str) {
     if(!render_inited) return;
     int count = (int) positions.size();
-    if (count > last_size || last_size == 0) {
-        delete[] vertices_position;
-        delete[] indices;
-        delete[] texture_coord;
-        vertices_position = new GLfloat[8*count];
-        indices = new GLuint[6*count];
-        texture_coord = new GLfloat[8*count];
-        last_size = count;
-    }
     if (count < 2) return;
+
+    GLfloat vert[4*count];
+    GLuint  inds[2*count];
+    GLfloat text[4*count];
+
     BYTE* bulletImage;
     int w = 0, h = 0;
     
@@ -261,13 +258,13 @@ void render_curvy(std::deque<std::tuple<double,double>> positions, std::string t
         h = std::get<2>(bulletData);
     }
     
-    add_curvy(0, positions[0], positions[0], positions[1], h, 0.0);
+    add_curvy(0, positions[0], positions[0], positions[1], vert, text, h, 0.0);
     for(int i=1; i<count-1; i++){
-        add_curvy(i, positions[i-1], positions[i], positions[i+1], h, (double)i/(double)(count-1));
+        add_curvy(i, positions[i-1], positions[i], positions[i+1], vert, text, h, (double)i/(double)(count-1));
     }
-    add_curvy(count-1, positions[count-2], positions[count-1], positions[count-1], h, 1.0);
+    add_curvy(count-1, positions[count-2], positions[count-1], positions[count-1], vert, text, h, 1.0);
     for(int i=0; i<2*count; i++){
-        indices[i] = i;
+        inds[i] = i;
     }
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -278,16 +275,16 @@ void render_curvy(std::deque<std::tuple<double,double>> positions, std::string t
     glBufferData(GL_ARRAY_BUFFER, 8*count*sizeof(GLfloat), NULL, GL_STATIC_DRAW);
 
     // Transfer the vertex positions:
-    glBufferSubData(GL_ARRAY_BUFFER, 0, 4*count*sizeof(GLfloat), vertices_position);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 4*count*sizeof(GLfloat), vert);
     // Transfer the texture coordinates:
-    glBufferSubData(GL_ARRAY_BUFFER, 4*count*sizeof(GLfloat), 4*count*sizeof(GLfloat), texture_coord);
+    glBufferSubData(GL_ARRAY_BUFFER, 4*count*sizeof(GLfloat), 4*count*sizeof(GLfloat), text);
 
     // Create an Element Array Buffer that will store the indices array:
     glGenBuffers(1, &eab);
 
     // Transfer the data from indices to eab
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2*count*sizeof(GLuint), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2*count*sizeof(GLuint), inds, GL_STATIC_DRAW);
 
     // Create a texture
     //GLuint texture;
