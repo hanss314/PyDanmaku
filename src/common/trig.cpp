@@ -1,5 +1,5 @@
 //
-// Created by hanss on 10/3/18.
+// ALL THESE FUNCTIONS TAKE RADS
 //
 
 #include <math.h>

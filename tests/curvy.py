@@ -25,7 +25,7 @@ def framerate():
     time.sleep(to_wait)
 
 x = pd.DanmakuGroup("images/rice.png")
-y = pd.DanmakuGroup("images/rice.png", True)
+y = pd.DanmakuGroup("images/amulet.png", True)
 i = 0
 
 #player = Moveable(100, 100, 2, "images/amulet.png")
@@ -43,7 +43,14 @@ def violin(x):
 @pd.modifier
 def wavy(step, b):
     if b.life < 30:
-        b = b._replace(ang=b.ang + 0.1*sin((step+b.life)/10), acc=b.acc+0.001)
+        b = b._replace(ang=b.ang + 0.1*sin((step+b.life)/10))
+    return b
+
+
+@pd.modifier
+def stop(step, b):
+    if b.life > 30:
+        b = b._replace(speed=0, acc=0)
     return b
 
 x.add_modifier(wavy)
@@ -67,10 +74,10 @@ try:
     for _ in range(60000):
         i+=1
         
-        if i % 4 == 1:
+        if i % 50 == 1:
             for j in range(10):
                 x.curvy_laser(
-                    pos+0*100*violin(i/100), 0, True, 10, 15,
+                    pos*0+0*100*violin(i/100), 0, True, 100, 15,
                     angle=i/30 + j*pi/5, speed=5
                 )
         if i % 4 == 3:

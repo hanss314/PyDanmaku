@@ -199,6 +199,38 @@ void renderer_init(const char* directory) {
 
 }
 
+void add_curvy(int i,
+    std::tuple<double,double> prev, 
+    std::tuple<double,double> curr, 
+    std::tuple<double,double> next, 
+    double w, double distance
+){
+    double px = std::get<0>(prev), py = std::get<1>(prev);
+    double cx = std::get<0>(curr), cy = std::get<1>(curr);
+    double nx = std::get<0>(next), ny = std::get<1>(next);
+    double pang = 0.0, nang = 0.0;
+    if (px == cx && py == cy){
+        pang = nang = atan2(ny-cy, nx-cx);
+    } else if (cx == nx && cy == ny){
+        pang = nang = atan2(cy-py, cx-px);
+    } else {
+        pang = atan2(cy-py, cx-px);
+        nang = atan2(ny-cy, nx-cx);
+    }
+    w /= 2;
+    double vang = (pang+nang)/2.0 + M_PI/2;
+    int s = 1;
+    if (vang < 0) s = -1;
+
+    vertices_position[4*i+0] = XU*(cx + s*w*l_cos(vang))-1.0;
+    vertices_position[4*i+1] = YU*(cy + s*w*l_sin(vang))-1.0;
+    vertices_position[4*i+2] = XU*(cx - s*w*l_cos(vang))-1.0;
+    vertices_position[4*i+3] = YU*(cy - s*w*l_sin(vang))-1.0;
+    
+    texture_coord[4*i+1] = 1.0; texture_coord[4*i+3] = 0.0;
+    texture_coord[4*i+2] = texture_coord[4*i] = distance;
+}
+
 void render_curvy(std::deque<std::tuple<double,double>> positions) {
     if(!render_inited) return;
     int count = (int) positions.size();
@@ -211,6 +243,7 @@ void render_curvy(std::deque<std::tuple<double,double>> positions) {
         texture_coord = new GLfloat[8*count];
         last_size = count;
     }
+    if (count < 2) return;
     BYTE* bulletImage;
     int w = 0, h = 0;
     
@@ -219,14 +252,66 @@ void render_curvy(std::deque<std::tuple<double,double>> positions) {
     w = std::get<1>(bulletData);
     h = std::get<2>(bulletData);
     
-    for(int i=0; i<count; i++){
-        std::tuple<double,double> vertex = positions[i];
-        add_quad(i, std::get<0>(vertex), std::get<1>(vertex), w, h, 0);
+    add_curvy(0, positions[0], positions[0], positions[1], h, 0.0);
+    for(int i=1; i<count-1; i++){
+        add_curvy(i, positions[i-1], positions[i], positions[i+1], h, (double)i/(double)(count-1));
     }
-    
-    initialize_quads(count, bulletImage, w, h);
+    add_curvy(count-1, positions[count-2], positions[count-1], positions[count-1], h, 1.0);
+    for(int i=0; i<2*count; i++){
+        indices[i] = i;
+    }
+    glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, 6*count, GL_UNSIGNED_INT, 0);
+    // Create a Vector Buffer Object that will store the vertices on video memory
+    glGenBuffers(1, &vbo);
+    // Allocate space for vertex positions and texture coordinates
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, 8*count*sizeof(GLfloat), NULL, GL_STATIC_DRAW);
+
+    // Transfer the vertex positions:
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 4*count*sizeof(GLfloat), vertices_position);
+    // Transfer the texture coordinates:
+    glBufferSubData(GL_ARRAY_BUFFER, 4*count*sizeof(GLfloat), 4*count*sizeof(GLfloat), texture_coord);
+
+    // Create an Element Array Buffer that will store the indices array:
+    glGenBuffers(1, &eab);
+
+    // Transfer the data from indices to eab
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2*count*sizeof(GLuint), indices, GL_STATIC_DRAW);
+
+    // Create a texture
+    //GLuint texture;
+    glGenTextures(1, &texture);
+    // Specify that we work with a 2D texture
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, bulletImage);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    // Get the location of the attributes that enters in the vertex shader
+    GLint position_attribute = glGetAttribLocation(shader, "position");
+
+    // Specify how the data for position can be accessed
+    glVertexAttribPointer(position_attribute, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    // Enable the attribute
+    glEnableVertexAttribArray(position_attribute);
+
+    // Texture coord attribute
+    GLint texture_coord_attribute = glGetAttribLocation(shader, "texture_coord");
+    glVertexAttribPointer(texture_coord_attribute, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(4*count*sizeof(GLfloat)));
+    glEnableVertexAttribArray(texture_coord_attribute);
+
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLE_STRIP, 2*count, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
     glDeleteBuffers(1, &vbo);
