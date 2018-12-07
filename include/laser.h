@@ -28,6 +28,8 @@ public:
     }
     bool run(double timestep, Bullet ref) override;
     bool run(double timestep) override;
+
+    bool collides(double x, double y, double radius) override;
     void render(bool b, int i, double h, double w, std::string texture) override{
         render_curvy(this->positions, texture);
     }

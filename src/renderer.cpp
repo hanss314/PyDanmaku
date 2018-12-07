@@ -264,7 +264,7 @@ void render_curvy(std::deque<std::tuple<double,double>> positions, std::string t
     }
     add_curvy(count-1, positions[count-2], positions[count-1], positions[count-1], vert, text, h, 1.0);
     for(int i=0; i<2*count; i++){
-        inds[i] = i;
+        inds[i] = 2*count-i-1;
     }
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);

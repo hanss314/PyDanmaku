@@ -42,10 +42,14 @@ def violin(x):
 
 @pd.modifier
 def wavy(step, b):
-    if b.life < 30:
-        b = b._replace(ang=b.ang + 0.1*sin((step+b.life)/10))
+    if b.life == 20:
+        b = b._replace(angm=0.3)
+    elif b.life >= t:
+        b = b._replace(angm=0, ang=b.ang + 0.2*sin((step+b.life)/10))
+
     return b
 
+t = 60
 
 @pd.modifier
 def stop(step, b):
@@ -74,20 +78,21 @@ try:
     for _ in range(60000):
         i+=1
         
-        if i % 50 == 1:
-            for j in range(10):
+        if i % 120 == 1:
+            t = random.randint(20, 80)
+            for j in range(40):
                 x.curvy_laser(
-                    pos*0+0*100*violin(i/100), 0, True, 100, 15,
-                    angle=i/30 + j*pi/5, speed=5
+                    20*cos(i+pi*j/20), 20*sin(i+pi*j/20), True, 100, 15,
+                    angle=i/30 + j*pi/20, speed=5
                 )
-        if i % 4 == 3:
+        if i % 4 == 5:
             for j in range(10):
                 y.add_bullet(
                     -pos+0*-100*violin(i/100), 0, False, 5, 100,
                     angle=2*pi*violin(i/100) + j*pi/5, speed=5
                 )
 
-#        player.run()
+        #player.run()
         x.run()
         x.render()
         y.run()

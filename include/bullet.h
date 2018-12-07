@@ -24,7 +24,7 @@ public:
     int life=0;
 
     bool broad_search(double x, double y, double radius);
-    bool collides(double x, double y, double radius);
+    virtual bool collides(double x, double y, double radius);
 
     Bullet();
     Bullet(
